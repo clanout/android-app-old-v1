@@ -1,4 +1,4 @@
-package reaper.list.event;
+package reaper.app.list.event;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

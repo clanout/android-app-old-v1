@@ -1,4 +1,4 @@
-package reaper.fragment;
+package reaper.app.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

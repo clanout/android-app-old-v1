@@ -1,4 +1,4 @@
-package reaper.fragment;
+package reaper.app.fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -23,14 +23,18 @@ import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import reaper.api.EventSummaryListApi;
+import reaper.api.model.event.EventSummary;
+import reaper.app.list.event.EventListAdapter;
+import reaper.app.list.event.EventListItem;
 import reaper.local.reaper.R;
-import reaper.list.event.EventListAdapter;
-import reaper.list.event.EventListItem;
 
 /**
  * Created by reaper on 04-04-2015.
  */
-public class HomeFragment extends Fragment implements View.OnClickListener, EventListAdapter.ClickListener{
+public class HomeFragment extends Fragment implements View.OnClickListener, EventListAdapter.ClickListener
+{
+    private ApiTask api = new ApiTask();
 
     private RecyclerView eventList;
     private Button pickDate, pickTime;
@@ -42,7 +46,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
     List<EventListItem> eventListData = new ArrayList<EventListItem>();
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         eventList = (RecyclerView) view.findViewById(R.id.rvEventsList);
         pickDate = (Button) view.findViewById(R.id.bDatePicker);
@@ -93,18 +98,22 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
         filterDate.setOnClickListener(this);
         filterMyEvents.setOnClickListener(this);
 
-        pickDate.setOnClickListener(new View.OnClickListener() {
+        pickDate.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 CalendarDialogFragment calendarDialogFragment = new CalendarDialogFragment();
                 calendarDialogFragment.show(fragmentManager, "Calendar");
             }
         });
 
-        pickTime.setOnClickListener(new View.OnClickListener() {
+        pickTime.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 showTimePicker();
             }
         });
@@ -118,7 +127,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
         return view;
     }
 
-    private List<EventListItem> getEventList(){
+    private List<EventListItem> getEventList()
+    {
         EventListItem eventListItem = new EventListItem();
         eventListItem.title = "Pub Crawl";
         eventListItem.location = "Koramangala";
@@ -132,28 +142,35 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(View v)
+    {
 
-        if(v.getTag().equals(TAG_FILTER_DATE)){
+        if (v.getTag().equals(TAG_FILTER_DATE))
+        {
             Toast.makeText(getActivity(), TAG_FILTER_DATE, Toast.LENGTH_LONG).show();
         }
-        if(v.getTag().equals(TAG_FILTER_LOCATION)){
+        if (v.getTag().equals(TAG_FILTER_LOCATION))
+        {
             Toast.makeText(getActivity(), TAG_FILTER_LOCATION, Toast.LENGTH_LONG).show();
         }
-        if(v.getTag().equals(TAG_FILTER_TIME)){
+        if (v.getTag().equals(TAG_FILTER_TIME))
+        {
             Toast.makeText(getActivity(), TAG_FILTER_TIME, Toast.LENGTH_LONG).show();
         }
-        if(v.getTag().equals(TAG_FILTER_MY_EVENTS)){
+        if (v.getTag().equals(TAG_FILTER_MY_EVENTS))
+        {
             Toast.makeText(getActivity(), TAG_FILTER_MY_EVENTS, Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
-    public void itemClicked(View view, int position) {
+    public void itemClicked(View view, int position)
+    {
         Toast.makeText(getActivity(), "item at " + position + " was clicked", Toast.LENGTH_LONG).show();
     }
 
-    public void showTimePicker() {
+    public void showTimePicker()
+    {
         // Inflate your custom layout containing 2 DatePickers
         LayoutInflater inflater = (LayoutInflater) getActivity().getLayoutInflater();
         View customView = inflater.inflate(R.layout.custom_time_picker, null);
@@ -166,19 +183,44 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(customView); // Set the view of the dialog to your custom layout
         builder.setTitle("Select start and end time");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 dialog.dismiss();
-            }});
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 dialog.dismiss();
             }
         });
 
         // Create and show the dialog
         builder.create().show();
+    }
+
+    private class ApiTask extends EventSummaryListApi
+    {
+        public ApiTask()
+        {
+            super(HomeFragment.this.getActivity());
+        }
+
+        @Override
+        protected void onPostExecute(Object o)
+        {
+            try
+            {
+                List<EventSummary> eventSummaryList = (List<EventSummary>) o;
+            }
+            catch (Exception e)
+            {
+            }
+        }
     }
 }

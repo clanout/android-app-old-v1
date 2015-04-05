@@ -1,4 +1,4 @@
-package reaper.activity;
+package reaper.app.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import reaper.local.reaper.R;
-import reaper.fragment.HomeFragment;
+import reaper.app.fragment.HomeFragment;
 
 /**
  * Created by reaper on 05-04-2015.
