@@ -1,4 +1,4 @@
-package harsh.local.reaper.adapter;
+package reaper.list.event;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -11,11 +11,10 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
-import harsh.local.reaper.R;
-import harsh.local.reaper.listitem.EventListItem;
+import reaper.local.reaper.R;
 
 /**
- * Created by harsh on 04-04-2015.
+ * Created by reaper on 04-04-2015.
  */
 public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.EventListViewHolder>{
 

@@ -1,4 +1,4 @@
-package harsh.local.reaper.fragment;
+package reaper.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,10 +13,10 @@ import com.squareup.timessquare.CalendarPickerView;
 import java.util.Calendar;
 import java.util.Date;
 
-import harsh.local.reaper.R;
+import reaper.local.reaper.R;
 
 /**
- * Created by harsh on 05-04-2015.
+ * Created by reaper on 05-04-2015.
  */
 public class CalendarDialogFragment extends DialogFragment implements View.OnClickListener {
 

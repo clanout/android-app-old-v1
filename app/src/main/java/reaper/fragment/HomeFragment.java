@@ -1,4 +1,4 @@
-package harsh.local.reaper.fragment;
+package reaper.fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -24,12 +23,12 @@ import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import harsh.local.reaper.R;
-import harsh.local.reaper.adapter.EventListAdapter;
-import harsh.local.reaper.listitem.EventListItem;
+import reaper.local.reaper.R;
+import reaper.list.event.EventListAdapter;
+import reaper.list.event.EventListItem;
 
 /**
- * Created by harsh on 04-04-2015.
+ * Created by reaper on 04-04-2015.
  */
 public class HomeFragment extends Fragment implements View.OnClickListener, EventListAdapter.ClickListener{
 

@@ -1,18 +1,15 @@
-package harsh.local.reaper.activity;
+package reaper.activity;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.widget.FrameLayout;
 
-import harsh.local.reaper.R;
-import harsh.local.reaper.fragment.HomeFragment;
+import reaper.local.reaper.R;
+import reaper.fragment.HomeFragment;
 
 /**
- * Created by harsh on 05-04-2015.
+ * Created by reaper on 05-04-2015.
  */
 public class MainActivity extends FragmentActivity {
 

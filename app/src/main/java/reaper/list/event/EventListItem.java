@@ -1,7 +1,7 @@
-package harsh.local.reaper.listitem;
+package reaper.list.event;
 
 /**
- * Created by harsh on 04-04-2015.
+ * Created by reaper on 04-04-2015.
  */
 public class EventListItem {
 
