@@ -7,7 +7,7 @@ public class Constants
 {
     public static class Servers
     {
-        public static final String APP = "http://localhost:8080/";
+        public static final String APP = "http://192.168.0.153:8080/";
     }
 
     public static class SharedPreferences

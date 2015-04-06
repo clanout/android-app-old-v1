@@ -6,13 +6,18 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -23,10 +28,9 @@ import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import reaper.api.EventSummaryListApi;
-import reaper.api.model.event.EventSummary;
+import reaper.api.event.EventListApi;
+import reaper.api.model.event.Event;
 import reaper.app.list.event.EventListAdapter;
-import reaper.app.list.event.EventListItem;
 import reaper.local.reaper.R;
 
 /**
@@ -34,16 +38,24 @@ import reaper.local.reaper.R;
  */
 public class HomeFragment extends Fragment implements View.OnClickListener, EventListAdapter.ClickListener
 {
-    private ApiTask api = new ApiTask();
+    private ApiTask apiTask;
+
+    private LinearLayout mainContent;
+    private TextView noRequestsMessage;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private RecyclerView eventList;
-    private Button pickDate, pickTime;
     private EventListAdapter eventListAdapter;
+    private List<Event> eventList = new ArrayList<>();
+
+    private Button pickDate, pickTime;
+
     private static final String TAG_FILTER_LOCATION = "filter_location";
     private static final String TAG_FILTER_TIME = "filter_time";
     private static final String TAG_FILTER_DATE = "filter_date";
     private static final String TAG_FILTER_MY_EVENTS = "filter_my_events";
-    List<EventListItem> eventListData = new ArrayList<EventListItem>();
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -52,6 +64,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
         eventList = (RecyclerView) view.findViewById(R.id.rvEventsList);
         pickDate = (Button) view.findViewById(R.id.bDatePicker);
         pickTime = (Button) view.findViewById(R.id.bTimePicker);
+        mainContent = (LinearLayout) view.findViewById(R.id.llHomefragmentMainContent);
+        noRequestsMessage = (TextView) view.findViewById(R.id.tvHomeFragmentNoEvents);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.srlHomeFragment);
 
         //Floating Action Button for filter
         ImageView imageView = new ImageView(getActivity());
@@ -117,29 +132,90 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
                 showTimePicker();
             }
         });
-
-        // Set adapter to recycler view
-        eventListAdapter = new EventListAdapter(getActivity(), getEventList());
-        eventListAdapter.setClickListener(this);
-        eventList.setAdapter(eventListAdapter);
-
-        eventList.setLayoutManager(new LinearLayoutManager(getActivity()));
         return view;
     }
 
-    private List<EventListItem> getEventList()
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState)
     {
-        EventListItem eventListItem = new EventListItem();
-        eventListItem.title = "Pub Crawl";
-        eventListItem.location = "Koramangala";
-        eventListItem.attendees = "11 friends are going";
-        eventListItem.date = "9 April";
-        eventListItem.time = "5pm - 11pm";
-        eventListItem.eventIconId = R.mipmap.ic_action_important;
-        eventListItem.statusIconId = R.mipmap.ic_action_accept;
-        eventListData.add(eventListItem);
-        return eventListData;
+        super.onActivityCreated(savedInstanceState);
+
+        mainContent.setVisibility(View.VISIBLE);
+        noRequestsMessage.setVisibility(View.GONE);
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.primary_material_light);
+        swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+        {
+            @Override
+            public void onRefresh()
+            {
+                apiTask = new ApiTask();
+                apiTask.execute();
+            }
+        });
+
+        initRecyclerView();
     }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+
+        swipeRefreshLayout.setRefreshing(true);
+        apiTask = new ApiTask();
+        apiTask.execute();
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+
+        if(apiTask!=null){
+            apiTask.cancel(true);
+        }
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        getActivity().getActionBar().setTitle("Events");
+    }
+
+    private void initRecyclerView(){
+        // Set adapter to recycler view
+        eventListAdapter = new EventListAdapter(getActivity(), eventList);
+        eventListAdapter.setClickListener(this);
+
+        eventList.setAdapter(eventListAdapter);
+
+        eventList.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    private void refreshRecyclerView()
+    {
+        eventListAdapter = new EventListAdapter(getActivity(), eventList);
+        eventListAdapter.setClickListener(this);
+
+        eventList.setAdapter(eventListAdapter);
+
+        if (eventList.size() == 0)
+        {
+            noRequestsMessage.setText("No events to show");
+            noRequestsMessage.setVisibility(View.VISIBLE);
+            mainContent.setVisibility(View.GONE);
+        }
+        else
+        {
+            mainContent.setVisibility(View.VISIBLE);
+            noRequestsMessage.setVisibility(View.GONE);
+        }
+    }
+
 
     @Override
     public void onClick(View v)
@@ -166,7 +242,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
     @Override
     public void itemClicked(View view, int position)
     {
-        Toast.makeText(getActivity(), "item at " + position + " was clicked", Toast.LENGTH_LONG).show();
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        EventDetailsFragment eventDetailsFragment = new EventDetailsFragment();
+        eventDetailsFragment.setEvent(eventList.get(position));
+        fragmentTransaction.replace(R.id.flMainActivity, eventDetailsFragment, "Event Details");
+        fragmentTransaction.commit();
     }
 
     public void showTimePicker()
@@ -204,7 +285,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
         builder.create().show();
     }
 
-    private class ApiTask extends EventSummaryListApi
+    private class ApiTask extends EventListApi
     {
         public ApiTask()
         {
@@ -216,7 +297,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
         {
             try
             {
-                List<EventSummary> eventSummaryList = (List<EventSummary>) o;
+               eventList = (List<Event>) o;
+               refreshRecyclerView();
+               swipeRefreshLayout.setRefreshing(false);
             }
             catch (Exception e)
             {

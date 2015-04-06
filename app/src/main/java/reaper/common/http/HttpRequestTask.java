@@ -8,13 +8,13 @@ import java.util.Map;
 
 import reaper.common.cache.Cache;
 
-public class HttpRequestTask extends AsyncTask<Void, Void, Object>
+public abstract class HttpRequestTask extends AsyncTask<Void, Void, Object>
 {
-    private String url;
-    private Context context;
-    private Map<String, String> postData;
-    private String cacheKey;
-    private boolean isCached;
+    protected String url;
+    protected Context context;
+    protected Map<String, String> postData;
+    protected String cacheKey;
+    protected boolean isCached;
 
     public HttpRequestTask(String url, Context context, String cacheKey)
     {
@@ -68,7 +68,6 @@ public class HttpRequestTask extends AsyncTask<Void, Void, Object>
             try
             {
                 jsonResponse = request.sendRequest(url, postData, context);
-                Cache.set(context, cacheKey, jsonResponse);
             }
             catch (HttpServerError httpServerError)
             {

@@ -1,11 +1,12 @@
 package reaper.api.model.event;
 
 import reaper.api.core.Model;
+import reaper.local.reaper.R;
 
 /**
  * Created by Aditya on 06-04-2015.
  */
-public class EventSummary implements Model
+public class Event implements Model
 {
     private String id;
     private String title;
@@ -22,6 +23,8 @@ public class EventSummary implements Model
     private boolean isOrganizer;
     private boolean isInvited;
     private int notificationCount;
+    private int eventIconId;
+    private int statusIconId;
 
     public String getId()
     {
@@ -96,5 +99,13 @@ public class EventSummary implements Model
     public int getNotificationCount()
     {
         return notificationCount;
+    }
+
+    public int getEventIconId(){
+        return R.drawable.ic_launcher;
+    }
+
+    public int getStatusIconId(){
+        return R.drawable.ic_launcher;
     }
 }

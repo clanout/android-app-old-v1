@@ -11,6 +11,7 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
+import reaper.api.model.event.Event;
 import reaper.local.reaper.R;
 
 /**
@@ -19,11 +20,11 @@ import reaper.local.reaper.R;
 public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.EventListViewHolder>{
 
     private LayoutInflater inflater;
-    List<EventListItem> data = Collections.emptyList();
+    List<Event> data = Collections.emptyList();
     private Context context;
     private ClickListener clickListener;
 
-    public EventListAdapter(Context context, List<EventListItem> data) {
+    public EventListAdapter(Context context, List<Event> data) {
         inflater = LayoutInflater.from(context);
         this.data = data;
         this.context = context;
@@ -38,14 +39,14 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
     @Override
     public void onBindViewHolder(EventListViewHolder holder, int position) {
-        EventListItem currentItem = data.get(position);
-        holder.title.setText(currentItem.title);
-        holder.location.setText(currentItem.location);
-        holder.attendees.setText(currentItem.attendees);
-        holder.date.setText(currentItem.date);
-        holder.time.setText(currentItem.time);
-        holder.eventIcon.setImageResource(currentItem.eventIconId);
-        holder.statusIcon.setImageResource(currentItem.statusIconId);
+        Event currentItem = data.get(position);
+        holder.title.setText(currentItem.getTitle());
+        holder.location.setText(currentItem.getLocation().getName());
+        holder.attendees.setText(currentItem.getAttendeeCount() + " friends are going");
+        holder.date.setText(currentItem.getStartDate() + "-" + currentItem.getEndDate());
+        holder.time.setText(currentItem.getStartTime() + "-" + currentItem.getEndTime());
+        holder.eventIcon.setImageResource(currentItem.getEventIconId());
+        holder.statusIcon.setImageResource(currentItem.getStatusIconId());
     }
 
     public void setClickListener(ClickListener clickListener){

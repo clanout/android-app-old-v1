@@ -7,7 +7,7 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/srlHomeFragment">
+        android:id="@+id/srlInvitePeopleFragment">
 
         <LinearLayout
             android:orientation="vertical"
@@ -18,13 +18,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:id="@+id/llHomefragmentMainContent">
+                android:id="@+id/llInvitePeopleFragmentMainContent">
 
                 <android.support.v7.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:id="@+id/rvEventsList"></android.support.v7.widget.RecyclerView>
+                    android:id="@+id/rvInvitePeopleList"></android.support.v7.widget.RecyclerView>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -34,21 +34,21 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/bDatePicker"
-                        android:text="Pick Date"/>
+                        android:id="@+id/bInvitePeople"
+                        android:text="Invite"/>
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/bTimePicker"
-                        android:text="Pick Time"/>
+                        android:id="@+id/bSkipInvitePeople"
+                        android:text="Skip"/>
                 </LinearLayout>
             </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/tvHomeFragmentNoEvents"
+                android:id="@+id/tvInvitePeopleNoFriends"
                 android:gravity="center_vertical|center_horizontal"/>
         </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
