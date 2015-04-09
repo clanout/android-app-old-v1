@@ -13,4 +13,13 @@ public class HandlerMessageStatusCode
 
     public static final int EVENT_RSVP_EDIT_SUCCESS = 5;
     public static final int EVENT_RSVP_EDIT_FAILURE = 6;
+
+    public static final int FRIEND_BLOCK_SUCCESS = 7;
+    public static final int FRIEND_BLOCK_FAILURE = 8;
+
+    public static final int FRIEND_SUBSCRIBE_SUCCESS = 9;
+    public static final int FRIEND_SUBSCRIBE_FAILURE = 10;
+
+    public static final int EVENT_INVITE_SUCCESS = 11;
+    public static final int EVENT_INVITE_FAILURE = 12;
 }

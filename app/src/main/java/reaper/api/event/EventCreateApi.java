@@ -7,13 +7,13 @@ import java.util.Map;
 
 import reaper.api.constants.HandlerMessageStatusCode;
 import reaper.api.constants.Uri;
-import reaper.common.http.HttpRequestRunnable;
+import reaper.common.http.HttpRequestThread;
 import reaper.common.http.UrlBuilder;
 
 /**
  * Created by Aditya on 06-04-2015.
  */
-public abstract class EventCreateApi extends HttpRequestRunnable
+public abstract class EventCreateApi extends HttpRequestThread
 {
     public EventCreateApi(Context context, Map<String, String> postData)
     {

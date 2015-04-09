@@ -47,6 +47,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         holder.time.setText(currentItem.getStartTime() + "-" + currentItem.getEndTime());
         holder.eventIcon.setImageResource(currentItem.getEventIconId());
         holder.statusIcon.setImageResource(currentItem.getStatusIconId());
+ //       holder.notification.setText(currentItem.getNotificationCount());
     }
 
     public void setClickListener(ClickListener clickListener){
@@ -61,7 +62,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     class EventListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView eventIcon, statusIcon;
-        TextView title, location, attendees, date, time;
+        TextView title, location, attendees, date, time, notification;
 
         public EventListViewHolder(View itemView) {
             super(itemView);
@@ -75,6 +76,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             attendees = (TextView) itemView.findViewById(R.id.tvCustomRowEventListAttendees);
             date = (TextView) itemView.findViewById(R.id.tvCustomRowEventListDate);
             time = (TextView) itemView.findViewById(R.id.tvCustomRowEventListTime);
+            notification = (TextView) itemView.findViewById(R.id.tvCustomRowEventListNotifications);
         }
 
         @Override

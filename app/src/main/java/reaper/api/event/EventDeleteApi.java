@@ -10,13 +10,13 @@ import reaper.api.constants.CacheKeys;
 import reaper.api.constants.HandlerMessageStatusCode;
 import reaper.api.constants.Uri;
 import reaper.common.cache.Cache;
-import reaper.common.http.HttpRequestRunnable;
+import reaper.common.http.HttpRequestThread;
 import reaper.common.http.UrlBuilder;
 
 /**
  * Created by Aditya on 06-04-2015.
  */
-public abstract class EventDeleteApi extends HttpRequestRunnable
+public abstract class EventDeleteApi extends HttpRequestThread
 {
     public EventDeleteApi(Context context, String id)
     {

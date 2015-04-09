@@ -1,4 +1,4 @@
-package reaper.app.fragment;
+package reaper.app.fragment.home;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -22,96 +22,62 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
-import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
-import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import reaper.api.event.EventListApi;
 import reaper.api.model.event.Event;
+import reaper.app.fragment.event.EventDetailsFragment;
 import reaper.app.list.event.EventListAdapter;
 import reaper.local.reaper.R;
 
 /**
  * Created by reaper on 04-04-2015.
  */
-public class HomeFragment extends Fragment implements View.OnClickListener, EventListAdapter.ClickListener
+public class HomeFragment extends Fragment implements EventListAdapter.ClickListener
 {
     private ApiTask apiTask;
 
     private LinearLayout mainContent;
-    private TextView noRequestsMessage;
+    private TextView noEventsMessage;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    private RecyclerView eventList;
+    private RecyclerView recyclerView;
     private EventListAdapter eventListAdapter;
     private List<Event> eventList = new ArrayList<>();
 
     private Button pickDate, pickTime;
 
-    private static final String TAG_FILTER_LOCATION = "filter_location";
-    private static final String TAG_FILTER_TIME = "filter_time";
-    private static final String TAG_FILTER_DATE = "filter_date";
-    private static final String TAG_FILTER_MY_EVENTS = "filter_my_events";
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        eventList = (RecyclerView) view.findViewById(R.id.rvEventsList);
+        recyclerView = (RecyclerView) view.findViewById(R.id.rvEventsList);
         pickDate = (Button) view.findViewById(R.id.bDatePicker);
         pickTime = (Button) view.findViewById(R.id.bTimePicker);
         mainContent = (LinearLayout) view.findViewById(R.id.llHomefragmentMainContent);
-        noRequestsMessage = (TextView) view.findViewById(R.id.tvHomeFragmentNoEvents);
+        noEventsMessage = (TextView) view.findViewById(R.id.tvHomeFragmentNoEvents);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.srlHomeFragment);
 
-        //Floating Action Button for filter
-        ImageView imageView = new ImageView(getActivity());
-        imageView.setImageResource(R.mipmap.ic_action_new);
+        ImageView iconCreate = new ImageView(getActivity());
+        iconCreate.setImageResource(R.drawable.ic_launcher);
 
-        FloatingActionButton actionButton = new FloatingActionButton.Builder(getActivity())
-                .setContentView(imageView)
+        FloatingActionButton createEvent = new FloatingActionButton.Builder(getActivity())
+                .setContentView(iconCreate)
                 .build();
 
-        //Filter icons for location, time, date, myevents
-        ImageView imageViewLocation = new ImageView(getActivity());
-        imageView.setImageResource(R.mipmap.ic_action_new);
 
-        ImageView imageViewTime = new ImageView(getActivity());
-        imageView.setImageResource(R.mipmap.ic_action_important);
+        createEvent.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Toast.makeText(getActivity(), "FAB Create was clicked", Toast.LENGTH_LONG).show();
+            }
+        });
 
-        ImageView imageViewDate = new ImageView(getActivity());
-        imageView.setImageResource(R.mipmap.ic_action_accept);
-
-        ImageView imageViewMyEvents = new ImageView(getActivity());
-        imageView.setImageResource(R.mipmap.ic_launcher);
-
-        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(getActivity());
-        SubActionButton filterLocation = itemBuilder.setContentView(imageViewLocation).build();
-        SubActionButton filterTime = itemBuilder.setContentView(imageViewTime).build();
-        SubActionButton filterDate = itemBuilder.setContentView(imageViewDate).build();
-        SubActionButton filterMyEvents = itemBuilder.setContentView(imageViewMyEvents).build();
-
-        FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(getActivity())
-                .addSubActionView(filterLocation)
-                .addSubActionView(filterTime)
-                .addSubActionView(filterDate)
-                .addSubActionView(filterMyEvents)
-                .attachTo(actionButton)
-                .build();
-
-        filterLocation.setTag(TAG_FILTER_LOCATION);
-        filterDate.setTag(TAG_FILTER_DATE);
-        filterTime.setTag(TAG_FILTER_TIME);
-        filterMyEvents.setTag(TAG_FILTER_MY_EVENTS);
-
-        filterLocation.setOnClickListener(this);
-        filterTime.setOnClickListener(this);
-        filterDate.setOnClickListener(this);
-        filterMyEvents.setOnClickListener(this);
 
         pickDate.setOnClickListener(new View.OnClickListener()
         {
@@ -141,7 +107,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
         super.onActivityCreated(savedInstanceState);
 
         mainContent.setVisibility(View.VISIBLE);
-        noRequestsMessage.setVisibility(View.GONE);
+        noEventsMessage.setVisibility(View.GONE);
 
         swipeRefreshLayout.setColorSchemeResources(R.color.primary_material_light);
         swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
@@ -152,6 +118,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
             public void onRefresh()
             {
                 apiTask = new ApiTask();
+                apiTask.enableRefreshing();
                 apiTask.execute();
             }
         });
@@ -174,7 +141,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
     {
         super.onPause();
 
-        if(apiTask!=null){
+        if (apiTask != null)
+        {
             apiTask.cancel(true);
         }
     }
@@ -186,14 +154,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
         getActivity().getActionBar().setTitle("Events");
     }
 
-    private void initRecyclerView(){
+    private void initRecyclerView()
+    {
         // Set adapter to recycler view
         eventListAdapter = new EventListAdapter(getActivity(), eventList);
         eventListAdapter.setClickListener(this);
 
-        eventList.setAdapter(eventListAdapter);
+        recyclerView.setAdapter(eventListAdapter);
 
-        eventList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     private void refreshRecyclerView()
@@ -201,41 +170,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
         eventListAdapter = new EventListAdapter(getActivity(), eventList);
         eventListAdapter.setClickListener(this);
 
-        eventList.setAdapter(eventListAdapter);
+        recyclerView.setAdapter(eventListAdapter);
 
         if (eventList.size() == 0)
         {
-            noRequestsMessage.setText("No events to show");
-            noRequestsMessage.setVisibility(View.VISIBLE);
+            noEventsMessage.setText("No events to show");
+            noEventsMessage.setVisibility(View.VISIBLE);
             mainContent.setVisibility(View.GONE);
         }
         else
         {
             mainContent.setVisibility(View.VISIBLE);
-            noRequestsMessage.setVisibility(View.GONE);
-        }
-    }
-
-
-    @Override
-    public void onClick(View v)
-    {
-
-        if (v.getTag().equals(TAG_FILTER_DATE))
-        {
-            Toast.makeText(getActivity(), TAG_FILTER_DATE, Toast.LENGTH_LONG).show();
-        }
-        if (v.getTag().equals(TAG_FILTER_LOCATION))
-        {
-            Toast.makeText(getActivity(), TAG_FILTER_LOCATION, Toast.LENGTH_LONG).show();
-        }
-        if (v.getTag().equals(TAG_FILTER_TIME))
-        {
-            Toast.makeText(getActivity(), TAG_FILTER_TIME, Toast.LENGTH_LONG).show();
-        }
-        if (v.getTag().equals(TAG_FILTER_MY_EVENTS))
-        {
-            Toast.makeText(getActivity(), TAG_FILTER_MY_EVENTS, Toast.LENGTH_LONG).show();
+            noEventsMessage.setVisibility(View.GONE);
         }
     }
 
@@ -252,11 +198,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
 
     public void showTimePicker()
     {
-        // Inflate your custom layout containing 2 DatePickers
+        // Inflate your custom layout containing 2 TimePickers
         LayoutInflater inflater = (LayoutInflater) getActivity().getLayoutInflater();
         View customView = inflater.inflate(R.layout.custom_time_picker, null);
 
-        // Define your date pickers
+        // Define your time pickers
         final TimePicker tpStartTime = (TimePicker) customView.findViewById(R.id.tpStartTime);
         final TimePicker tpEndTime = (TimePicker) customView.findViewById(R.id.tpEndTime);
 
@@ -297,9 +243,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Even
         {
             try
             {
-               eventList = (List<Event>) o;
-               refreshRecyclerView();
-               swipeRefreshLayout.setRefreshing(false);
+                eventList = (List<Event>) o;
+                refreshRecyclerView();
+                swipeRefreshLayout.setRefreshing(false);
             }
             catch (Exception e)
             {

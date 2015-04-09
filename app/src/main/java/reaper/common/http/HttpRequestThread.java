@@ -9,14 +9,14 @@ import java.util.Map;
 /**
  * Created by Aditya on 06-04-2015.
  */
-public abstract class HttpRequestRunnable implements Runnable
+public abstract class HttpRequestThread extends Thread
 {
     protected String url;
     protected Context context;
     protected Map<String, String> postData;
     protected Handler handler;
 
-    public HttpRequestRunnable(String url, Context context)
+    public HttpRequestThread(String url, Context context)
     {
         this.url = url;
         this.context = context;

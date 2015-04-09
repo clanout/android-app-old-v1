@@ -22,6 +22,7 @@ public class InviteUsersListAdapter extends RecyclerView.Adapter<InviteUsersList
 {
     private LayoutInflater inflater;
     List<User> data = Collections.emptyList();
+    private ClickListener clickListener;
 
     public InviteUsersListAdapter(Context context, List<User> data)
     {
@@ -42,7 +43,11 @@ public class InviteUsersListAdapter extends RecyclerView.Adapter<InviteUsersList
     {
         User current = data.get(position);
         holder.userPic.setImageResource(current.getProfilePic());
-        holder.username.setText(current.getFirstName() + " " + current.getLastname());
+        holder.username.setText(current.getFirstname() + " " + current.getLastname());
+    }
+
+    public void setClickListener(ClickListener clickListener){
+        this.clickListener = clickListener;
     }
 
     @Override
@@ -51,7 +56,7 @@ public class InviteUsersListAdapter extends RecyclerView.Adapter<InviteUsersList
         return data.size();
     }
 
-    class InviteUsersViewHolder extends RecyclerView.ViewHolder
+    class InviteUsersViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         ImageView userPic;
         TextView username;
@@ -60,9 +65,22 @@ public class InviteUsersListAdapter extends RecyclerView.Adapter<InviteUsersList
         public InviteUsersViewHolder(View itemView)
         {
             super(itemView);
+            itemView.setOnClickListener(this);
             userPic = (ImageView) itemView.findViewById(R.id.ivCustomRowInviteUsersPic);
             username = (TextView) itemView.findViewById(R.id.tvcustomrowInviteUsersName);
             checkBox = (CheckBox) itemView.findViewById(R.id.cbCustomRowinviteUsersheckBox);
         }
+
+        @Override
+        public void onClick(View view)
+        {
+            if(clickListener!=null){
+                clickListener.itemClicked(view, getPosition());
+            }
+        }
+    }
+
+    public interface ClickListener{
+        public void itemClicked(View view, int position);
     }
 }

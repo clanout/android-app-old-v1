@@ -1,6 +1,7 @@
 package reaper.common.http;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -85,6 +86,7 @@ public class HttpRequest
         }
         catch (Exception e)
         {
+            Log.e("APP", e.getMessage());
         }
         finally
         {

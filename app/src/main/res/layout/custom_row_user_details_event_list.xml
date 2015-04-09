@@ -17,7 +17,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/ivCustomRowEventListEventIcon"/>
+            android:id="@+id/ivCustomRowUserDetailsEventListEventIcon"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -28,7 +28,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvCustomRowEventListTitle"/>
+                android:id="@+id/tvCustomRowUserDetailsEventListTitle"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -38,23 +38,23 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvCustomRowEventListTime"/>
+                    android:id="@+id/tvCustomRowUserDetailsEventListTime"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvCustomRowEventListDate"/>
+                    android:id="@+id/tvCustomRowUserDetailsEventListDate"/>
             </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvCustomRowEventListLocation"/>
+                android:id="@+id/tvCustomRowUserDetailsEventListLocation"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvCustomRowEventListAttendees"/>
+                android:id="@+id/tvCustomRowUserDetailsEventListAttendees"/>
 
         </LinearLayout>
 
@@ -63,15 +63,10 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvCustomRowEventListNotifications"/>
-
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/ivCustomRowEventListStatusIcon"/>
+                android:id="@+id/ivCustomRowUserDetailsEventListStatusIcon"/>
 
 
         </LinearLayout>

@@ -4,26 +4,26 @@ import android.content.Context;
 import android.os.Message;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import reaper.api.constants.HandlerMessageStatusCode;
 import reaper.api.constants.Uri;
-import reaper.api.model.event.EventRsvpStatus;
 import reaper.common.http.HttpRequestThread;
 import reaper.common.http.UrlBuilder;
 
 /**
- * Created by Aditya on 06-04-2015.
+ * Created by Aditya on 07-04-2015.
  */
-public abstract class EventRsvpApi extends HttpRequestThread
+public class EventInviteUsersApi extends HttpRequestThread
 {
-    public EventRsvpApi(Context context, String id, EventRsvpStatus rsvpStatus)
+    public EventInviteUsersApi(Context context, String eventId, List<String> userId)
     {
-        super(UrlBuilder.build(Uri.EVENT_RSVP), context);
+        super(UrlBuilder.build(Uri.EVENT_INVITE), context);
 
         Map<String, String> postData = new HashMap<>();
-        postData.put("event_id", id);
-        postData.put("rsvp_status", String.valueOf(rsvpStatus));
+        postData.put("event_id", eventId);
+        postData.put("user_id", String.valueOf(userId));
 
         setPostData(postData);
     }
@@ -34,7 +34,7 @@ public abstract class EventRsvpApi extends HttpRequestThread
         if (handler != null)
         {
             Message message = Message.obtain();
-            message.what = HandlerMessageStatusCode.EVENT_RSVP_EDIT_SUCCESS;
+            message.what = HandlerMessageStatusCode.EVENT_INVITE_SUCCESS;
             handler.sendMessageAtFrontOfQueue(message);
         }
     }
@@ -45,7 +45,7 @@ public abstract class EventRsvpApi extends HttpRequestThread
         if (handler != null)
         {
             Message message = Message.obtain();
-            message.what = HandlerMessageStatusCode.EVENT_RSVP_EDIT_FAILURE;
+            message.what = HandlerMessageStatusCode.EVENT_INVITE_FAILURE;
             handler.sendMessageAtFrontOfQueue(message);
         }
     }

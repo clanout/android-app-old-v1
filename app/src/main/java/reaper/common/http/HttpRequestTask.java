@@ -2,6 +2,7 @@ package reaper.common.http;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,7 @@ public abstract class HttpRequestTask extends AsyncTask<Void, Void, Object>
     protected Map<String, String> postData;
     protected String cacheKey;
     protected boolean isCached;
+    protected boolean isRefreshMode;
 
     public HttpRequestTask(String url, Context context, String cacheKey)
     {
@@ -24,6 +26,7 @@ public abstract class HttpRequestTask extends AsyncTask<Void, Void, Object>
         this.postData = new HashMap<>();
         this.cacheKey = cacheKey;
         this.isCached = true;
+        this.isRefreshMode = false;
     }
 
     public void setPostData(Map<String, String> postData)
@@ -36,13 +39,27 @@ public abstract class HttpRequestTask extends AsyncTask<Void, Void, Object>
         isCached = false;
     }
 
+    public void enableRefreshing()
+    {
+        isRefreshMode = true;
+    }
+
 
     @Override
     protected Object doInBackground(Void... params)
     {
         if (isCached)
         {
-            String jsonResponse = Cache.get(context, cacheKey);
+            String jsonResponse = null;
+
+            if (!isRefreshMode)
+            {
+                jsonResponse = Cache.get(context, cacheKey);
+            }
+            else
+            {
+                isRefreshMode = false;
+            }
 
             if (jsonResponse == null)
             {
