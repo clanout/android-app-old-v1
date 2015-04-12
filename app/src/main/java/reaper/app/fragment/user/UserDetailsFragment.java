@@ -16,12 +16,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import reaper.R;
 import reaper.api.model.event.Event;
 import reaper.api.model.user.User;
 import reaper.api.model.user.UserEvents;
 import reaper.api.user.UserEventsApi;
 import reaper.app.list.user.UserDetailsEventListAdapter;
-import reaper.local.reaper.R;
 
 /**
  * Created by Aditya on 07-04-2015.

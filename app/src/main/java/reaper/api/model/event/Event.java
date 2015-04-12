@@ -1,7 +1,7 @@
 package reaper.api.model.event;
 
+import reaper.R;
 import reaper.api.core.Model;
-import reaper.local.reaper.R;
 
 /**
  * Created by Aditya on 06-04-2015.

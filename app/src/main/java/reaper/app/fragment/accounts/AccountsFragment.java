@@ -15,9 +15,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import reaper.R;
 import reaper.app.list.accounts.AccountsAdapter;
 import reaper.app.list.accounts.AccountsListItem;
-import reaper.local.reaper.R;
 
 /**
  * Created by Aditya on 07-04-2015.

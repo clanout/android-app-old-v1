@@ -18,12 +18,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import reaper.api.event.EventListApi;
+import reaper.R;
 import reaper.api.me.MyEventListApi;
 import reaper.api.model.event.Event;
 import reaper.app.fragment.event.EventDetailsFragment;
 import reaper.app.list.event.EventListAdapter;
-import reaper.local.reaper.R;
 
 /**
  * Created by Aditya on 07-04-2015.

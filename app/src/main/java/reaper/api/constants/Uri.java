@@ -19,4 +19,7 @@ public class Uri
     public static final String MY_FRIENDS_LIST = "me/friends";
     public static final String FRIEND_BLOCK = "me/block";
     public static final String FRIEND_SUBSCRIBE = "me/subscribe";
+
+    public static final String AUTHENTICATION = "auth";
+    public static final String AUTHENTICATION_VALIDATION = "auth/validate";
 }

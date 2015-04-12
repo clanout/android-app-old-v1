@@ -11,8 +11,8 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
+import reaper.R;
 import reaper.api.model.event.Event;
-import reaper.local.reaper.R;
 
 /**
  * Created by reaper on 04-04-2015.

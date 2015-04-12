@@ -7,7 +7,7 @@ public class Constants
 {
     public static class Servers
     {
-        public static final String APP = "http://192.168.0.158:8080/";
+        public static final String APP = "http://192.168.0.158:8080/v1.0/";
     }
 
     public static class SharedPreferences
@@ -18,7 +18,7 @@ public class Constants
 
     public static class AppPreferenceKeys
     {
-        public static final String SESSION_ID = "SESSION_ID";
+        public static final String SESSION_ID = "_SESSIONID";
     }
 
     public static class Cache

@@ -17,8 +17,8 @@ import android.widget.Toast;
 import java.util.HashMap;
 import java.util.Map;
 
+import reaper.R;
 import reaper.api.event.EventCreateApi;
-import reaper.local.reaper.R;
 
 /**
  * Created by Aditya on 06-04-2015.

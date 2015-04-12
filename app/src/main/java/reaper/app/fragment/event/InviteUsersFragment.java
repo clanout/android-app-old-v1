@@ -17,10 +17,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import reaper.R;
 import reaper.api.me.FriendListApi;
 import reaper.api.model.user.User;
 import reaper.app.list.inviteusers.InviteUsersListAdapter;
-import reaper.local.reaper.R;
 
 /**
  * Created by Aditya on 06-04-2015.

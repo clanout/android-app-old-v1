@@ -21,13 +21,13 @@ import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import reaper.R;
 import reaper.api.event.EventDetailsApi;
 import reaper.api.model.event.Event;
 import reaper.api.model.event.EventDetails;
 import reaper.api.model.event.EventType;
 import reaper.api.model.user.User;
 import reaper.app.list.event.EventDetailsAdapter;
-import reaper.local.reaper.R;
 
 /**
  * Created by Aditya on 06-04-2015.

@@ -7,9 +7,12 @@ import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,9 +87,17 @@ public class HttpRequest
                 throw new HttpServerError();
             }
         }
-        catch (Exception e)
+        catch (MalformedURLException e)
         {
-            Log.e("APP", e.getMessage());
+            e.printStackTrace();
+        }
+        catch (ProtocolException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
         finally
         {

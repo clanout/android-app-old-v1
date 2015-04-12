@@ -26,11 +26,11 @@ import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import reaper.R;
 import reaper.api.event.EventListApi;
 import reaper.api.model.event.Event;
 import reaper.app.fragment.event.EventDetailsFragment;
 import reaper.app.list.event.EventListAdapter;
-import reaper.local.reaper.R;
 
 /**
  * Created by reaper on 04-04-2015.

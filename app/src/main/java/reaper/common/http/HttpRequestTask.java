@@ -27,6 +27,11 @@ public abstract class HttpRequestTask extends AsyncTask<Void, Void, Object>
         this.cacheKey = cacheKey;
         this.isCached = true;
         this.isRefreshMode = false;
+
+        if(cacheKey == null)
+        {
+            disableCaching();
+        }
     }
 
     public void setPostData(Map<String, String> postData)

@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
-import reaper.local.reaper.R;
+import reaper.R;
 
 /**
  * Created by Aditya on 07-04-2015.

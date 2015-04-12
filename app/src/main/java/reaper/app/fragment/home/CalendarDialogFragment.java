@@ -13,7 +13,8 @@ import com.squareup.timessquare.CalendarPickerView;
 import java.util.Calendar;
 import java.util.Date;
 
-import reaper.local.reaper.R;
+import reaper.R;
+
 
 /**
  * Created by reaper on 05-04-2015.

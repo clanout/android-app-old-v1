@@ -11,8 +11,8 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
+import reaper.R;
 import reaper.api.model.user.User;
-import reaper.local.reaper.R;
 
 /**
  * Created by Aditya on 08-04-2015.
