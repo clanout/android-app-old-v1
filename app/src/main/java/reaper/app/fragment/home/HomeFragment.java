@@ -29,6 +29,7 @@ import java.util.List;
 import reaper.R;
 import reaper.api.event.EventListApi;
 import reaper.api.model.event.Event;
+import reaper.app.fragment.event.CreateEventFragment;
 import reaper.app.fragment.event.EventDetailsFragment;
 import reaper.app.list.event.EventListAdapter;
 
@@ -49,6 +50,7 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
     private List<Event> eventList = new ArrayList<>();
 
     private Button pickDate, pickTime;
+    private FragmentManager fragmentManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -74,7 +76,13 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
             @Override
             public void onClick(View view)
             {
-                Toast.makeText(getActivity(), "FAB Create was clicked", Toast.LENGTH_LONG).show();
+                if(fragmentManager == null){
+                    fragmentManager = getActivity().getSupportFragmentManager();
+                }
+
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.flMainActivity, new CreateEventFragment(), "Create Event");
+                fragmentTransaction.commit();
             }
         });
 
@@ -108,6 +116,8 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
 
         mainContent.setVisibility(View.VISIBLE);
         noEventsMessage.setVisibility(View.GONE);
+
+        fragmentManager = getActivity().getSupportFragmentManager();
 
         swipeRefreshLayout.setColorSchemeResources(R.color.primary_material_light);
         swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
@@ -188,7 +198,10 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
     @Override
     public void itemClicked(View view, int position)
     {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        if(fragmentManager == null){
+            fragmentManager = getActivity().getSupportFragmentManager();
+        }
+
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         EventDetailsFragment eventDetailsFragment = new EventDetailsFragment();
         eventDetailsFragment.setEvent(eventList.get(position));

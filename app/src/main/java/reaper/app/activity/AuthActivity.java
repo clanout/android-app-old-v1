@@ -41,7 +41,6 @@ public class AuthActivity extends FragmentActivity
 
     public void gotoLoginFragment()
     {
-        Log.d("APP", "going to login fragment");
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.flAuthActivity, new LoginFragment(), "Login");
