@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Reaper</string>
     <string name="app_id">379308882276511</string>
+    <string name="message_server_error_relogin">Seems like we messed up! Please try again in some time.</string>
 </resources>

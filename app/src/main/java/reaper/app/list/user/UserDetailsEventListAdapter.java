@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 import reaper.R;
-import reaper.api.model.event.Event;
+import reaper.api.model.event._Event;
 
 /**
  * Created by Aditya on 08-04-2015.
@@ -20,9 +20,9 @@ import reaper.api.model.event.Event;
 public class UserDetailsEventListAdapter extends RecyclerView.Adapter<UserDetailsEventListAdapter.UserDetailsEventListViewHolder>
 {
     private LayoutInflater inflater;
-    List<Event> data = Collections.emptyList();
+    List<_Event> data = Collections.emptyList();
 
-    public UserDetailsEventListAdapter(Context context, List<Event> data)
+    public UserDetailsEventListAdapter(Context context, List<_Event> data)
     {
         inflater = LayoutInflater.from(context);
         this.data = data;
@@ -39,14 +39,14 @@ public class UserDetailsEventListAdapter extends RecyclerView.Adapter<UserDetail
     @Override
     public void onBindViewHolder(UserDetailsEventListViewHolder holder, int position)
     {
-        Event currentItem = data.get(position);
-        holder.title.setText(currentItem.getTitle());
-        holder.location.setText(currentItem.getLocation().getName());
-        holder.attendees.setText(currentItem.getAttendeeCount() + " friends are going");
-        holder.date.setText(currentItem.getStartDate() + "-" + currentItem.getEndDate());
-        holder.time.setText(currentItem.getStartTime() + "-" + currentItem.getEndTime());
-        holder.eventIcon.setImageResource(currentItem.getEventIconId());
-        holder.statusIcon.setImageResource(currentItem.getStatusIconId());
+//        _Event currentItem = data.get(position);
+//        holder.title.setText(currentItem.getTitle());
+//        holder.location.setText(currentItem.getLocation().getName());
+//        holder.attendees.setText(currentItem.getAttendeeCount() + " friends are going");
+//        holder.date.setText(currentItem.getStartDate() + "-" + currentItem.getEndDate());
+//        holder.time.setText(currentItem.getStartTime() + "-" + currentItem.getEndTime());
+//        holder.eventIcon.setImageResource(currentItem.getEventIconId());
+//        holder.statusIcon.setImageResource(currentItem.getStatusIconId());
     }
 
     @Override

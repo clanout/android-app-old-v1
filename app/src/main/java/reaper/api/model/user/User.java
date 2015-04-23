@@ -1,6 +1,6 @@
 package reaper.api.model.user;
 
-import reaper.api.core.Model;
+import reaper.api.model.core.Model;
 
 /**
  * Created by Aditya on 06-04-2015.

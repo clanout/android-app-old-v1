@@ -1,114 +1,94 @@
 package reaper.common.cache;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.util.Log;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.HashMap;
 
 import reaper.conf.Constants;
 
 /**
- * Created by harsh.pokharna on 2/7/2015.
+ * Created by Aditya on 22-04-2015.
  */
-public class Cache
+public class Cache implements Serializable
 {
-    private static boolean isValid(Context context, String timestampKey)
+    private static Cache instance;
+
+    private HashMap<String, Object> data;
+
+    private Cache()
+    {
+        data = new HashMap<>();
+    }
+
+    public static Cache getInstance()
+    {
+        if (instance == null)
+        {
+            throw new IllegalStateException();
+        }
+
+        return instance;
+    }
+
+    public void put(String key, Object value)
+    {
+        data.put(key, value);
+    }
+
+    public Object get(String key)
+    {
+        return data.get(key);
+    }
+
+    public void remove(String key)
+    {
+        data.remove(key);
+    }
+
+    public static void init(Context context)
     {
         try
         {
-            String cacheFile = Constants.SharedPreferences.CACHE;
-            SharedPreferences cachePreferences = context.getSharedPreferences(cacheFile, Context.MODE_PRIVATE);
-
-            String timestampStr = cachePreferences.getString(timestampKey, null);
-            Long storedTimestamp = Long.parseLong(timestampStr);
-            Long currentTimestamp = System.currentTimeMillis();
-
-            if ((currentTimestamp - storedTimestamp) <= Constants.Cache.CACHE_TIMESTAMP_LIMIT && (currentTimestamp - storedTimestamp) >= 0)
+            File file = context.getFileStreamPath(Constants.Cache.CACHE_FILE);
+            if (file.exists())
             {
-                return true;
+                ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file));
+                instance = (Cache) inputStream.readObject();
+                inputStream.close();
             }
             else
             {
-                return false;
+                instance = new Cache();
             }
         }
-        catch (Exception e)
+        catch (IOException | ClassNotFoundException e)
         {
-            return false;
+            Log.d("APP", "Cache error " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    private static void updateTimestamp(Context context, String timestampKey)
+    public static void commit(Context context)
     {
         try
         {
-            String cacheFile = Constants.SharedPreferences.CACHE;
-            SharedPreferences cachePreferences = context.getSharedPreferences(cacheFile, Context.MODE_PRIVATE);
-
-            SharedPreferences.Editor editor = cachePreferences.edit();
-
-            editor.remove(timestampKey);
-            editor.putString(timestampKey, String.valueOf(System.currentTimeMillis()));
-
-            editor.commit();
+            File file = context.getFileStreamPath(Constants.Cache.CACHE_FILE);
+            ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file, false));
+            outputStream.writeObject(instance);
+            outputStream.close();
         }
-        catch (Exception e)
+        catch (IOException e)
         {
-        }
-    }
-
-    private static String getTimestampKey(String key)
-    {
-        return Constants.Cache.TIMESTAMP_PREFIX + key;
-    }
-
-    public static String get(Context context, String key)
-    {
-        try
-        {
-            if (isValid(context, getTimestampKey(key)))
-            {
-                String cacleFile = Constants.SharedPreferences.CACHE;
-                SharedPreferences cachePreferences = context.getSharedPreferences(cacleFile, Context.MODE_PRIVATE);
-                return cachePreferences.getString(key, null);
-            }
-        }
-        catch (Exception e)
-        {
-        }
-        return null;
-    }
-
-    public static void set(Context context, String key, String value)
-    {
-        try
-        {
-            String cacheFile = Constants.SharedPreferences.CACHE;
-            SharedPreferences cachePreferences = context.getSharedPreferences(cacheFile, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = cachePreferences.edit();
-
-            editor.remove(key);
-            editor.putString(key, value);
-            editor.commit();
-
-            // Update timestamp
-            updateTimestamp(context, getTimestampKey(key));
-        }
-        catch (Exception e)
-        {
-        }
-    }
-
-    public static void delete(Context context, String key)
-    {
-        try
-        {
-            String cacheFile = Constants.SharedPreferences.CACHE;
-            SharedPreferences cachePreferences = context.getSharedPreferences(cacheFile, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = cachePreferences.edit();
-            editor.remove(key);
-            editor.commit();
-        }
-        catch (Exception e)
-        {
+            Log.d("APP", e.getMessage());
+            e.printStackTrace();
         }
     }
 }

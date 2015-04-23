@@ -1,8 +1,5 @@
 package reaper.common.http;
 
-import android.content.Context;
-import android.util.Log;
-
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -17,7 +14,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import reaper.conf.AppPreferences;
 import reaper.conf.Constants;
 
 /**
@@ -25,19 +21,14 @@ import reaper.conf.Constants;
  */
 public class HttpRequest
 {
-    public String sendRequest(String url, Map<String, String> postData, Context context) throws HttpServerError
+    public String sendRequest(String url, Map<String, String> postData) throws HttpServerError
     {
         if (postData == null)
         {
             postData = new HashMap<>();
         }
 
-        // Add session cookie to post data
-        String sessionId = AppPreferences.get(context, Constants.AppPreferenceKeys.SESSION_ID);
-        if (sessionId != null)
-        {
-            postData.put(Constants.AppPreferenceKeys.SESSION_ID, sessionId);
-        }
+        postData.put("_ME", "9320369679");
 
         // URL
         URL urlObject = null;

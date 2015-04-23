@@ -2,36 +2,25 @@ package reaper.common.http;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import reaper.common.cache.Cache;
+import reaper.conf.AppPreferences;
+import reaper.conf.Constants;
 
 public abstract class HttpRequestTask extends AsyncTask<Void, Void, Object>
 {
     protected String url;
-    protected Context context;
     protected Map<String, String> postData;
-    protected String cacheKey;
-    protected boolean isCached;
-    protected boolean isRefreshMode;
+    protected Context context;
 
-    public HttpRequestTask(String url, Context context, String cacheKey)
+    public HttpRequestTask(String url, Context context)
     {
         super();
         this.url = url;
         this.context = context;
         this.postData = new HashMap<>();
-        this.cacheKey = cacheKey;
-        this.isCached = true;
-        this.isRefreshMode = false;
-
-        if(cacheKey == null)
-        {
-            disableCaching();
-        }
     }
 
     public void setPostData(Map<String, String> postData)
@@ -39,64 +28,28 @@ public abstract class HttpRequestTask extends AsyncTask<Void, Void, Object>
         this.postData = postData;
     }
 
-    public void disableCaching()
-    {
-        isCached = false;
-    }
-
-    public void enableRefreshing()
-    {
-        isRefreshMode = true;
-    }
-
-
     @Override
     protected Object doInBackground(Void... params)
     {
-        if (isCached)
+        String jsonResponse = null;
+        HttpRequest request = new HttpRequest();
+
+        try
         {
-            String jsonResponse = null;
-
-            if (!isRefreshMode)
+            String sessionId = AppPreferences.get(context, Constants.AppPreferenceKeys.SESSION_ID);
+            if (sessionId != null)
             {
-                jsonResponse = Cache.get(context, cacheKey);
-            }
-            else
-            {
-                isRefreshMode = false;
+                postData.put(Constants.Http.SESSION_ID, sessionId);
             }
 
-            if (jsonResponse == null)
-            {
-                HttpRequest request = new HttpRequest();
-
-                try
-                {
-                    jsonResponse = request.sendRequest(url, postData, context);
-                    Cache.set(context, cacheKey, jsonResponse);
-                }
-                catch (HttpServerError httpServerError)
-                {
-                    jsonResponse = null;
-                }
-            }
-            return jsonResponse;
+            jsonResponse = request.sendRequest(url, postData);
         }
-        else
+        catch (HttpServerError httpServerError)
         {
-            String jsonResponse = null;
-            HttpRequest request = new HttpRequest();
-
-            try
-            {
-                jsonResponse = request.sendRequest(url, postData, context);
-            }
-            catch (HttpServerError httpServerError)
-            {
-                jsonResponse = null;
-            }
-            return jsonResponse;
+            jsonResponse = null;
         }
+        return jsonResponse;
     }
-
 }
+
+

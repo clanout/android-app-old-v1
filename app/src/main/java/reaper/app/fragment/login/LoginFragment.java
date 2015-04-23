@@ -1,25 +1,35 @@
 package reaper.app.fragment.login;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 import reaper.R;
-import reaper.api.login.LoginApi;
+import reaper.api.endpoints.login.LoginApi;
+import reaper.api.endpoints.login.LoginValidationApi;
+import reaper.app.activity.MainActivity;
+import reaper.app.service.FacebookService;
 import reaper.conf.AppPreferences;
 import reaper.conf.Constants;
 
@@ -28,29 +38,51 @@ import reaper.conf.Constants;
  */
 public class LoginFragment extends Fragment implements View.OnClickListener
 {
+    private LoginApiTask loginApiTask;
+    private LoginValidationApiTask loginValidationApiTask;
+
+    private int status;
+    private ArrayList<String> missingPermissions;
+
+    private LoginButton facebookLoginButton;
     private CallbackManager callbackManager;
+
     private FacebookCallback<LoginResult> facebookCallback = new FacebookCallback<LoginResult>()
     {
         @Override
         public void onSuccess(LoginResult loginResult)
         {
             AccessToken accessToken = loginResult.getAccessToken();
-            Log.d("APP", accessToken.getToken());
+            Log.d("APP", "Login Fragment: onsuccess  = " + accessToken);
+            validatePermissions(accessToken);
 
-            ApiTask apiTask = new ApiTask(getActivity(), accessToken.getToken());
-            apiTask.execute();
+            if (validatePermissions(accessToken))
+            {
+                Log.d("APP", "Login Fragment: permissions ok");
+                String sessionId = AppPreferences.get(getActivity(), Constants.AppPreferenceKeys.SESSION_ID);
+                if (sessionId == null)
+                {
+                    Log.d("APP", "LoginFragment: session_id null");
+                    loginApiTask = new LoginApiTask(accessToken.getToken());
+                    loginApiTask.execute();
+                }
+                else
+                {
+                    Log.d("APP", "LoginFragment: validating session_id");
+                    loginValidationApiTask = new LoginValidationApiTask();
+                    loginValidationApiTask.execute();
+                }
+            }
         }
 
         @Override
         public void onCancel()
         {
-
         }
 
         @Override
         public void onError(FacebookException e)
         {
-
         }
     };
 
@@ -72,12 +104,53 @@ public class LoginFragment extends Fragment implements View.OnClickListener
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
-        LoginButton facebookLoginButton = (LoginButton) view.findViewById(R.id.login_button);
-        facebookLoginButton.setReadPermissions("user_friends", "public_profile", "email");
-        facebookLoginButton.setFragment(this);
-        facebookLoginButton.registerCallback(callbackManager, facebookCallback);
 
-        facebookLoginButton.setOnClickListener(this);
+        LoginManager.getInstance().registerCallback(callbackManager, facebookCallback);
+
+        Log.d("APP", "Login Fragment: status  = " + status);
+
+        if (status == FacebookService.ACCESS_TOKEN_INVALID || status == FacebookService.SESSION_ID_NULL)
+        {
+            if (status == FacebookService.SESSION_ID_NULL)
+            {
+                LoginManager.getInstance().logOut();
+            }
+            facebookLoginButton = (LoginButton) view.findViewById(R.id.login_button);
+            facebookLoginButton.setReadPermissions("user_friends", "public_profile", "email");
+            facebookLoginButton.setFragment(this);
+            facebookLoginButton.registerCallback(callbackManager, facebookCallback);
+            facebookLoginButton.setOnClickListener(this);
+            facebookLoginButton.setVisibility(View.VISIBLE);
+        }
+
+        if (status == FacebookService.ACCESS_TOKEN_PERMISSIONS_INVALID)
+        {
+            LoginManager.getInstance().logOut();
+            LoginManager.getInstance().logInWithReadPermissions(this, missingPermissions);
+        }
+
+    }
+
+    public boolean validatePermissions(AccessToken accessToken)
+    {
+        Set<String> permissions = accessToken.getPermissions();
+        Set<String> declinedPermissions = new HashSet<>();
+        if (!permissions.contains("email"))
+        {
+            declinedPermissions.add("email");
+        }
+        if (!permissions.contains("user_friends"))
+        {
+            declinedPermissions.add("user_friends");
+        }
+
+        if (accessToken.isExpired() || declinedPermissions.size() > 0)
+        {
+            LoginManager.getInstance().logInWithReadPermissions(this, declinedPermissions);
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -90,24 +163,88 @@ public class LoginFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View view)
     {
-
+        facebookLoginButton.setVisibility(View.GONE);
     }
 
-    class ApiTask extends LoginApi
+    @Override
+    public void onPause()
     {
-        public ApiTask(Context context, String accessToken)
+        super.onPause();
+        if (loginApiTask != null)
         {
-            super(context, accessToken);
+            loginApiTask.cancel(true);
+        }
+
+        if (loginValidationApiTask != null)
+        {
+            loginValidationApiTask.cancel(true);
+        }
+    }
+
+    public void gotoMainActivity()
+    {
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        startActivity(intent);
+    }
+
+    public void setData(int status, ArrayList<String> missingPermissions)
+    {
+        this.status = status;
+        this.missingPermissions = missingPermissions;
+    }
+
+    class LoginApiTask extends LoginApi
+    {
+        public LoginApiTask(String accessToken)
+        {
+            super(getActivity(), accessToken);
         }
 
         @Override
         protected void onPostExecute(Object o)
         {
             String sessionId = (String) o;
-            if(sessionId != null)
+            if (sessionId != null)
             {
                 AppPreferences.set(getActivity(), Constants.AppPreferenceKeys.SESSION_ID, sessionId);
-                Log.d("APP", "Login Successful " + sessionId);
+                gotoMainActivity();
+            }
+            else
+            {
+                Toast.makeText(getActivity(), R.string.message_server_error_relogin, Toast.LENGTH_LONG).show();
+
+                FragmentManager manager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = manager.beginTransaction();
+                LoginFragment loginFragment = new LoginFragment();
+                loginFragment.setData(FacebookService.SESSION_ID_NULL, new ArrayList<String>());
+                fragmentTransaction.replace(R.id.flAuthActivity, loginFragment, "Re-Login");
+                fragmentTransaction.commit();
+            }
+        }
+    }
+
+    private class LoginValidationApiTask extends LoginValidationApi
+    {
+        public LoginValidationApiTask()
+        {
+            super(getActivity());
+        }
+
+        @Override
+        protected void onPostExecute(Object o)
+        {
+            Boolean isLoggedIn = (Boolean) o;
+
+            Log.d("APP", "LoginFragment: session_id validity = " + isLoggedIn);
+
+            if (isLoggedIn)
+            {
+                gotoMainActivity();
+            }
+            else
+            {
+                loginApiTask = new LoginApiTask(AccessToken.getCurrentAccessToken().getToken());
+                loginApiTask.execute();
             }
         }
     }

@@ -2,8 +2,8 @@ package reaper.api.model.user;
 
 import java.util.List;
 
-import reaper.api.core.Model;
-import reaper.api.model.event.Event;
+import reaper.api.model.core.Model;
+import reaper.api.model.event._Event;
 
 /**
  * Created by Aditya on 06-04-2015.
@@ -11,20 +11,20 @@ import reaper.api.model.event.Event;
 public class UserEvents implements Model
 {
     private String id;
-    private List<Event> goingEvents;
-    private List<Event> maybeEvents;
+    private List<_Event> goingEvents;
+    private List<_Event> maybeEvents;
 
     public String getId()
     {
         return id;
     }
 
-    public List<Event> getGoingEvents()
+    public List<_Event> getGoingEvents()
     {
         return goingEvents;
     }
 
-    public List<Event> getMaybeEvents()
+    public List<_Event> getMaybeEvents()
     {
         return maybeEvents;
     }

@@ -13,7 +13,6 @@ public class Constants
     public static class SharedPreferences
     {
         public static final String APP = "PREFERENCES_APP";
-        public static final String CACHE = "PREFERENCES_CACHE";
     }
 
     public static class AppPreferenceKeys
@@ -21,14 +20,21 @@ public class Constants
         public static final String SESSION_ID = "_SESSIONID";
     }
 
+    public static class Location
+    {
+        public static final String ZONE = "ZONE";
+        public static final String LATITUDE = "LATITUDE";
+        public static final String LONGITUDE = "LONGITUDE";
+    }
+
     public static class Cache
     {
-        public static final long CACHE_TIMESTAMP_LIMIT = 86400000;
-        public static final String TIMESTAMP_PREFIX = "TIMESTAMP_";
+        public static final String CACHE_FILE = "reaper_cache";
     }
 
     public static class Http
     {
+        public static final String SESSION_ID = "_SESSIONID";
         public static final int CONNECTION_TIMEOUT = 3000;
         public static final int READ_TIMEOUT = 10000;
     }

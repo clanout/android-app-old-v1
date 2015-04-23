@@ -17,7 +17,8 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/ivCustomRowEventListEventIcon"/>
+            android:id="@+id/ivCustomRowEventListEventIcon"
+            android:src="@drawable/ic_launcher"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -38,12 +39,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvCustomRowEventListTime"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvCustomRowEventListDate"/>
+                    android:id="@+id/tvCustomRowEventListDateTime"/>
             </LinearLayout>
 
             <TextView
@@ -63,17 +59,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvCustomRowEventListNotifications"/>
-
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/ivCustomRowEventListStatusIcon"/>
-
-
+                android:id="@+id/ivCustomRowEventListStatusIcon"
+                android:src="@drawable/abc_btn_check_to_on_mtrl_015"/>
         </LinearLayout>
 
 

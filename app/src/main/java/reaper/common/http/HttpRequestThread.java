@@ -6,6 +6,9 @@ import android.os.Handler;
 import java.util.HashMap;
 import java.util.Map;
 
+import reaper.conf.AppPreferences;
+import reaper.conf.Constants;
+
 /**
  * Created by Aditya on 06-04-2015.
  */
@@ -41,7 +44,14 @@ public abstract class HttpRequestThread extends Thread
         HttpRequest request = new HttpRequest();
         try
         {
-            jsonResponse = request.sendRequest(url, postData, context);
+            String sessionId = AppPreferences.get(context, Constants.AppPreferenceKeys.SESSION_ID);
+
+            if (sessionId != null)
+            {
+                postData.put(Constants.Http.SESSION_ID, sessionId);
+            }
+
+            jsonResponse = request.sendRequest(url, postData);
         }
         catch (HttpServerError httpServerError)
         {
