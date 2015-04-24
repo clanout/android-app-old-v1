@@ -36,7 +36,7 @@ import reaper.app.list.event.EventListAdapter;
 /**
  * Created by reaper on 04-04-2015.
  */
-public class HomeFragment extends Fragment implements EventListAdapter.ClickListener, View.OnClickListener
+public class HomeFragment extends Fragment implements EventListAdapter.EventSummaryItemClickListener, View.OnClickListener, EventListAdapter.RsvpClickListener
 {
     private FragmentManager fragmentManager;
     private ApiTask apiTask;
@@ -45,7 +45,7 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
 
     private LinearLayout mainContent;
     private TextView noEventsMessage;
-    private SwipeRefreshLayout swipeRefreshLayout;
+//    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
     private EventListAdapter eventListAdapter;
     private FloatingActionButton createEvent;
@@ -58,7 +58,7 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
         recyclerView = (RecyclerView) view.findViewById(R.id.rvEventsList);
         mainContent = (LinearLayout) view.findViewById(R.id.llHomefragmentMainContent);
         noEventsMessage = (TextView) view.findViewById(R.id.tvHomeFragmentNoEvents);
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.srlHomeFragment);
+//        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.srlHomeFragment);
         filter = (Button) view.findViewById(R.id.bHomeFragmentFilter);
         sort = (Button) view.findViewById(R.id.bHomeFragmentSort);
 
@@ -110,20 +110,21 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
 
         eventList = new ArrayList<>();
 
-        swipeRefreshLayout.setColorSchemeResources(R.color.primary_material_light);
-        swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
-        {
-            @Override
-            public void onRefresh()
-            {
-                sort.setText("Relevance");
-                filter.setText("Until Weekend");
-                apiTask = new ApiTask();
-                apiTask.execute();
-            }
-        });
+//        swipeRefreshLayout.setColorSchemeResources(R.color.primary_material_light);
+//        swipeRefreshLayout.setDistanceToTriggerSync(250);
+//        swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
+//
+//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+//        {
+//            @Override
+//            public void onRefresh()
+//            {
+//                sort.setText("Relevance");
+//                filter.setText("Until Weekend");
+//                apiTask = new ApiTask();
+//                apiTask.execute();
+//            }
+//        });
 
         initRecyclerView();
     }
@@ -133,7 +134,7 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
     {
         super.onResume();
 
-        swipeRefreshLayout.setRefreshing(true);
+//        swipeRefreshLayout.setRefreshing(true);
         apiTask = new ApiTask();
         apiTask.execute();
     }
@@ -160,7 +161,8 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
     {
         // Set adapter to recycler view
         eventListAdapter = new EventListAdapter(getActivity(), eventList);
-        eventListAdapter.setClickListener(this);
+        eventListAdapter.setEventSummaryItemClickListener(this);
+        eventListAdapter.setRsvpClickListener(this);
 
         recyclerView.setAdapter(eventListAdapter);
 
@@ -170,7 +172,8 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
     private void refreshRecyclerView()
     {
         eventListAdapter = new EventListAdapter(getActivity(), eventList);
-        eventListAdapter.setClickListener(this);
+        eventListAdapter.setEventSummaryItemClickListener(this);
+        eventListAdapter.setRsvpClickListener(this);
 
         recyclerView.setAdapter(eventListAdapter);
 
@@ -192,7 +195,7 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
     }
 
     @Override
-    public void itemClicked(View view, int position)
+    public void onEventSummaryItemClicked(View view, int position)
     {
         if (fragmentManager == null)
         {
@@ -281,6 +284,12 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
         }
     }
 
+    @Override
+    public void onRsvpButtonClicked(View view, int buttonId, int position)
+    {
+
+    }
+
     private class ApiTask extends EventListApi
     {
         public ApiTask()
@@ -295,7 +304,7 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
             {
                 eventList = (List<Event>) o;
                 refreshRecyclerView();
-                swipeRefreshLayout.setRefreshing(false);
+//                swipeRefreshLayout.setRefreshing(false);
             }
             catch (Exception e)
             {
