@@ -10,27 +10,33 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import reaper.R;
 import reaper.api.endpoints.event.EventListApi;
 import reaper.api.model.event.Event;
+import reaper.api.model.event.EventDateTimeComparator;
+import reaper.api.model.event.EventDistanceComparator;
+import reaper.api.model.event.EventRelevanceComparator;
 import reaper.app.list.event.EventListAdapter;
-import reaper.common.cache.Cache;
 
 /**
  * Created by reaper on 04-04-2015.
  */
-public class HomeFragment extends Fragment implements EventListAdapter.ClickListener
+public class HomeFragment extends Fragment implements EventListAdapter.ClickListener, View.OnClickListener
 {
     private FragmentManager fragmentManager;
     private ApiTask apiTask;
@@ -43,6 +49,7 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
     private RecyclerView recyclerView;
     private EventListAdapter eventListAdapter;
     private FloatingActionButton createEvent;
+    private Button filter, sort;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -52,12 +59,16 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
         mainContent = (LinearLayout) view.findViewById(R.id.llHomefragmentMainContent);
         noEventsMessage = (TextView) view.findViewById(R.id.tvHomeFragmentNoEvents);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.srlHomeFragment);
+        filter = (Button) view.findViewById(R.id.bHomeFragmentFilter);
+        sort = (Button) view.findViewById(R.id.bHomeFragmentSort);
 
         ImageView iconCreate = new ImageView(getActivity());
         iconCreate.setImageResource(R.drawable.ic_launcher);
 
         createEvent = new FloatingActionButton.Builder(getActivity())
                 .setContentView(iconCreate)
+                .setPosition(FloatingActionButton.POSITION_BOTTOM_CENTER)
+                .setTheme(FloatingActionButton.THEME_DARK)
                 .build();
 
 
@@ -74,6 +85,10 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
                 Log.d("APP", "[CLICK] Create Event");
             }
         });
+
+        sort.setOnClickListener(this);
+        filter.setOnClickListener(this);
+
         return view;
     }
 
@@ -84,6 +99,12 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
 
         mainContent.setVisibility(View.VISIBLE);
         noEventsMessage.setVisibility(View.GONE);
+
+        filter.setVisibility(View.GONE);
+        sort.setVisibility(View.GONE);
+
+        filter.setText("Until Weekend");
+        sort.setText("Relevance");
 
         fragmentManager = getActivity().getSupportFragmentManager();
 
@@ -97,6 +118,8 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
             @Override
             public void onRefresh()
             {
+                sort.setText("Relevance");
+                filter.setText("Until Weekend");
                 apiTask = new ApiTask();
                 apiTask.execute();
             }
@@ -156,11 +179,15 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
             noEventsMessage.setText("No events to show");
             noEventsMessage.setVisibility(View.VISIBLE);
             mainContent.setVisibility(View.GONE);
+            filter.setVisibility(View.GONE);
+            sort.setVisibility(View.GONE);
         }
         else
         {
             mainContent.setVisibility(View.VISIBLE);
             noEventsMessage.setVisibility(View.GONE);
+            filter.setVisibility(View.VISIBLE);
+            sort.setVisibility(View.VISIBLE);
         }
     }
 
@@ -179,6 +206,79 @@ public class HomeFragment extends Fragment implements EventListAdapter.ClickList
 //        fragmentTransaction.commit();
 
         Log.d("APP", "Event = " + eventList.get(position).getId());
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+        if (view.getId() == R.id.bHomeFragmentFilter)
+        {
+            PopupMenu filterMenu = new PopupMenu(getActivity(), filter);
+            filterMenu.getMenuInflater().inflate(R.menu.popup_filter_menu, filterMenu.getMenu());
+
+            filterMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
+            {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem)
+                {
+                    if (menuItem.getItemId() == R.id.itemToday)
+                    {
+                        filter.setText(menuItem.getTitle().toString());
+
+                        refreshRecyclerView();
+                    }
+
+                    if (menuItem.getItemId() == R.id.itemStartTime)
+                    {
+                        filter.setText(menuItem.getTitle().toString());
+
+                        refreshRecyclerView();
+                    }
+                    return true;
+                }
+            });
+
+            filterMenu.show();
+        }
+
+        if (view.getId() == R.id.bHomeFragmentSort)
+        {
+            PopupMenu sortMenu = new PopupMenu(getActivity(), sort);
+            sortMenu.getMenuInflater().inflate(R.menu.popup_sort_menu, sortMenu.getMenu());
+
+            sortMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
+            {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem)
+                {
+                    if (menuItem.getItemId() == R.id.itemRelevance)
+                    {
+                        sort.setText(menuItem.getTitle().toString());
+                        Collections.sort(eventList, new EventRelevanceComparator(0.4, 0.6));
+                        refreshRecyclerView();
+                    }
+
+                    if (menuItem.getItemId() == R.id.itemStartTime)
+                    {
+                        sort.setText(menuItem.getTitle().toString());
+                        Collections.sort(eventList, new EventDateTimeComparator());
+                        refreshRecyclerView();
+                    }
+
+                    if (menuItem.getItemId() == R.id.itemDistance)
+                    {
+                        sort.setText(menuItem.getTitle().toString());
+                        Collections.sort(eventList, new EventDistanceComparator(77, 23));
+                        refreshRecyclerView();
+                    }
+
+                    return true;
+                }
+            });
+
+            sortMenu.show();
+
+        }
     }
 
     private class ApiTask extends EventListApi

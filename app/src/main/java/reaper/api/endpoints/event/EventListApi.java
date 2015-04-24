@@ -5,6 +5,7 @@ import android.content.Context;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import reaper.api.constants.Uri;
 import reaper.api.model.core.BasicJsonParser;
 import reaper.api.model.core.ModelFactory;
 import reaper.api.model.event.Event;
+import reaper.api.model.event.EventRelevanceComparator;
 import reaper.common.cache.Cache;
 import reaper.common.http.HttpRequestTask;
 import reaper.common.http.UrlBuilder;
@@ -68,6 +70,7 @@ public abstract class EventListApi extends HttpRequestTask
         }
 
         List<Event> events = new ArrayList<>(eventMap.values());
+        Collections.sort(events, new EventRelevanceComparator(0.4,0.6));
         return events;
     }
 }

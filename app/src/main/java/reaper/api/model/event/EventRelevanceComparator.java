@@ -21,6 +21,6 @@ public class EventRelevanceComparator implements Comparator<Event>
     {
         Double importanceEvent1 = ((coefficientFriendCount*event.getFriendCount()) + (coefficientInviterCount*event.getInviterCount()));
         Double importanceEvent2 = ((coefficientFriendCount*event2.getFriendCount()) + (coefficientInviterCount*event2.getInviterCount()));
-        return importanceEvent1.compareTo(importanceEvent2);
+        return importanceEvent2.compareTo(importanceEvent1);
     }
 }

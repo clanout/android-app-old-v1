@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.List;
 
 import reaper.R;
@@ -34,7 +38,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     @Override
     public EventListViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        View view = inflater.inflate(R.layout.custom_row_event_list, parent, false);
+        View view = inflater.inflate(R.layout.list_item_event_summary, parent, false);
         EventListViewHolder eventListViewHolder = new EventListViewHolder(view);
         return eventListViewHolder;
     }
@@ -44,12 +48,54 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     {
         Event currentItem = data.get(position);
         holder.title.setText(currentItem.getTitle());
-        holder.location.setText(currentItem.getLocation().getName());
-        holder.attendees.setText(currentItem.getAttendeeCount() + " friends are going");
-        holder.date.setText(currentItem.getStartTime().toString() + "-" + currentItem.getEndTime().toString());
-//        holder.eventIcon.setImageResource(currentItem.getEventIconId());
-        // holder.statusIcon.setImageResource(currentItem.getStatusIconId());
-        //       holder.notification.setText(currentItem.getNotificationCount());
+
+        DateTime dateTime = currentItem.getStartTime();
+        DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("MMM dd");
+        DateTimeFormatter timeFormatter = DateTimeFormat.forPattern("HH:mm");
+
+        if (currentItem.getLocation().getName().isEmpty() || currentItem.getLocation().getName() == null)
+        {
+            holder.timeLocation.setText(dateTime.toString(timeFormatter) + ", (Location Not Specified)");
+        }
+        else
+        {
+            holder.timeLocation.setText(dateTime.toString(timeFormatter) + ", " + currentItem.getLocation().getName());
+        }
+
+        if (currentItem.getFriendCount() == 0)
+        {
+            holder.attendees.setText("No friends are going");
+        }
+        else
+        {
+
+            if (currentItem.getFriendCount() == 1)
+            {
+                holder.attendees.setText("1 friend is going");
+            }
+            else
+            {
+                holder.attendees.setText(currentItem.getFriendCount() + " friends are going");
+                holder.date.setText(dateTime.toString(dateFormatter));
+            }
+        }
+        if (currentItem.getRsvp() == Event.RSVP.YES)
+        {
+            holder.rsvpIcon.setImageResource(R.drawable.ic_check_circle_black_24dp);
+        }
+
+        if (currentItem.getRsvp() == Event.RSVP.MAYBE)
+        {
+            holder.rsvpIcon.setImageResource(R.drawable.ic_help_black_24dp);
+        }
+
+        if (currentItem.getCategory() == "bar")
+        {
+            holder.eventIcon.setImageResource(R.drawable.ic_local_bar_black_36dp);
+        }
+
+        holder.chatIcon.setImageResource(R.drawable.ic_chat_black_18dp);
+        holder.updatesIcon.setImageResource(R.drawable.ic_info_black_18dp);
     }
 
     public void setClickListener(ClickListener clickListener)
@@ -66,8 +112,8 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     class EventListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
 
-        ImageView eventIcon, statusIcon;
-        TextView title, location, attendees, date, time, notification;
+        ImageView eventIcon, rsvpIcon, chatIcon, updatesIcon;
+        TextView title, timeLocation, attendees, date;
 
         public EventListViewHolder(View itemView)
         {
@@ -75,12 +121,14 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
             itemView.setOnClickListener(this);
 
-            eventIcon = (ImageView) itemView.findViewById(R.id.ivCustomRowEventListEventIcon);
-            statusIcon = (ImageView) itemView.findViewById(R.id.ivCustomRowEventListStatusIcon);
-            title = (TextView) itemView.findViewById(R.id.tvCustomRowEventListTitle);
-            location = (TextView) itemView.findViewById(R.id.tvCustomRowEventListLocation);
-            attendees = (TextView) itemView.findViewById(R.id.tvCustomRowEventListAttendees);
-            date = (TextView) itemView.findViewById(R.id.tvCustomRowEventListDateTime);
+            eventIcon = (ImageView) itemView.findViewById(R.id.ivListItemEventIcon);
+            rsvpIcon = (ImageView) itemView.findViewById(R.id.ivListItemEventRsvp);
+            chatIcon = (ImageView) itemView.findViewById(R.id.ivListItemEventChat);
+            updatesIcon = (ImageView) itemView.findViewById(R.id.ivListItemEventUpdates);
+            title = (TextView) itemView.findViewById(R.id.tvListItemEventTitle);
+            timeLocation = (TextView) itemView.findViewById(R.id.tvListItemEventTimeLocation);
+            attendees = (TextView) itemView.findViewById(R.id.tvListItemEventAttendees);
+            date = (TextView) itemView.findViewById(R.id.tvListItemEventDate);
         }
 
         @Override
