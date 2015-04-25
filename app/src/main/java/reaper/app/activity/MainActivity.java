@@ -1,26 +1,52 @@
 package reaper.app.activity;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
+import java.util.List;
+
 import reaper.R;
-import reaper.app.fragment.home.HomeFragment;
+import reaper.api.model.event.Event;
+import reaper.app.backgroundservice.EventFeedListener;
+import reaper.app.backgroundservice.EventFeedService;
 import reaper.common.cache.Cache;
 
 /**
  * Created by reaper on 05-04-2015.
  */
-public class MainActivity extends FragmentActivity
+public class MainActivity extends FragmentActivity implements EventFeedListener
 {
+    private EventFeedService.EventFeedBinder binder = null;
+
+    private ServiceConnection eventFeedConnection = new ServiceConnection()
+    {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder)
+        {
+            Log.d("APP", "activity connected");
+            binder = (EventFeedService.EventFeedBinder) iBinder;
+            binder.setEventFeedListener(MainActivity.this);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName)
+        {
+            binder = null;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.d("APP", "activity created");
 
 //        LocationService locationService = new LocationService(this);
 //
@@ -32,11 +58,22 @@ public class MainActivity extends FragmentActivity
 //            Log.d("APP", "MAIN ACTIVITY zone" + zone);
 //        }
 
+        Intent intent = new Intent(this, EventFeedService.class);
+        startService(intent);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.flMainActivity, new HomeFragment(), "Home");
-        fragmentTransaction.commit();
+
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.flMainActivity, new HomeFragment(), "Home");
+//        fragmentTransaction.commit();
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        Intent intent = new Intent(this, EventFeedService.class);
+        bindService(intent, eventFeedConnection, BIND_AUTO_CREATE);
     }
 
     @Override
@@ -45,6 +82,8 @@ public class MainActivity extends FragmentActivity
         super.onStop();
         Cache.commit(this);
         Log.d("APP", "onStop");
+        Intent intent = new Intent(this, EventFeedService.class);
+        stopService(intent);
     }
 
     @Override
@@ -52,6 +91,12 @@ public class MainActivity extends FragmentActivity
     {
         super.onPause();
         Log.d("APP", "onPause");
+    }
+
+    @Override
+    public void onEventFeedUpdate(List<Event> events)
+    {
+        Log.d("APP", "Event feed updated");
     }
 
     //    private class LocationAsyncTask extends AsyncTask
