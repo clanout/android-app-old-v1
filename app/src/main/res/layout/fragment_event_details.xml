@@ -4,111 +4,145 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <ScrollView
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="12dp"
+                android:gravity="center_vertical|center_horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ivEventDetailsIcon"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_vertical"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"
+                    android:id="@+id/tvEventDetailsTitle"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:maxLines="2"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginRight="4dp"
+                        android:id="@+id/tvEventDetailsLocation"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_pin_drop_black_24dp"
+                        android:layout_marginRight="4dp"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical|center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvEventDetailsStartDateTime"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_access_time_black_24dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvEventDetailsEndDateTime"/>
+
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            android:textStyle="italic"
+            android:gravity="center_horizontal"
+            android:id="@+id/tvEventDetailsDescription"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:scrollbars="vertical">
+        android:orientation="vertical"
+        android:layout_marginTop="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:id="@+id/llEventdetailsUsers">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:id="@+id/ivEventDetailsIcon"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/tvEventDetailsTitle"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/tvEventDetailsDescription"/>
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:id="@+id/tvEventDetailsLocation"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:id="@+id/tvEventDetailsDate"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:id="@+id/tvEventDetailsTime"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:id="@+id/tvEvenDetailsType"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:id="@+id/tvEventDetailsLockStatus"/>
-            </LinearLayout>
-
-            <LinearLayout
+            <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:id="@+id/rvEventDetails"
+                />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:id="@+id/llEventDetailsMainContent">
-
-                    <android.support.v7.widget.RecyclerView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:id="@+id/rvEventDetails"></android.support.v7.widget.RecyclerView>
-
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/tvEventDetailsNoUsers"
-                    android:gravity="center_vertical|center_horizontal"/>
-            </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:id="@+id/tvEventDetailsNoUsers"/>
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -119,15 +153,19 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:id="@+id/bEventDetailsChat"
-            android:text="Chat"
-            />
+            android:id="@+id/bEventDetailsRsvp"/>
 
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:id="@+id/bEventDetailsInviteUsers"
-            android:text="Invite Users"/>
+            android:id="@+id/bEventDetailsEdit"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:id="@+id/bEventDetailsChat"/>
     </LinearLayout>
+
 </LinearLayout>

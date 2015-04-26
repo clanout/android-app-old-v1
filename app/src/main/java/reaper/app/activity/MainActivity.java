@@ -6,6 +6,8 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
 import java.util.List;
@@ -14,6 +16,7 @@ import reaper.R;
 import reaper.api.model.event.Event;
 import reaper.app.backgroundservice.EventFeedListener;
 import reaper.app.backgroundservice.EventFeedService;
+import reaper.app.fragment.home.HomeFragment;
 import reaper.common.cache.Cache;
 
 /**
@@ -57,23 +60,23 @@ public class MainActivity extends FragmentActivity implements EventFeedListener
 //
 //            Log.d("APP", "MAIN ACTIVITY zone" + zone);
 //        }
+//
+//        Intent intent = new Intent(this, EventFeedService.class);
+//        startService(intent);
 
-        Intent intent = new Intent(this, EventFeedService.class);
-        startService(intent);
 
-
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.flMainActivity, new HomeFragment(), "Home");
-//        fragmentTransaction.commit();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.flMainActivity, new HomeFragment(), "Home");
+        fragmentTransaction.commit();
     }
 
     @Override
     protected void onStart()
     {
         super.onStart();
-        Intent intent = new Intent(this, EventFeedService.class);
-        bindService(intent, eventFeedConnection, BIND_AUTO_CREATE);
+//        Intent intent = new Intent(this, EventFeedService.class);
+//        bindService(intent, eventFeedConnection, BIND_AUTO_CREATE);
     }
 
     @Override

@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 import reaper.R;
+import reaper.api.model.event.EventDetails;
 import reaper.api.model.user.User;
 
 /**
@@ -20,10 +21,10 @@ import reaper.api.model.user.User;
 public class EventDetailsAdapter extends RecyclerView.Adapter<EventDetailsAdapter.EventDetailsViewHolder>
 {
     private LayoutInflater inflater;
-    List<User> data = Collections.emptyList();
+    List<EventDetails.Attendee> data = Collections.emptyList();
     private ClickListener clickListener;
 
-    public EventDetailsAdapter(Context context, List<User> data)
+    public EventDetailsAdapter(Context context, List<EventDetails.Attendee> data)
     {
         inflater = LayoutInflater.from(context);
         this.data = data;
@@ -32,7 +33,7 @@ public class EventDetailsAdapter extends RecyclerView.Adapter<EventDetailsAdapte
     @Override
     public EventDetailsViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        View view = inflater.inflate(R.layout.custom_row_event_details, parent, false);
+        View view = inflater.inflate(R.layout.list_item_event_details, parent, false);
         EventDetailsViewHolder eventDetailsViewHolder = new EventDetailsViewHolder(view);
         return eventDetailsViewHolder;
     }
@@ -40,9 +41,11 @@ public class EventDetailsAdapter extends RecyclerView.Adapter<EventDetailsAdapte
     @Override
     public void onBindViewHolder(EventDetailsViewHolder holder, int position)
     {
-        User current = data.get(position);
-        holder.name.setText(current.getFirstname() + " " + current.getLastname());
-        holder.pic.setImageResource(current.getProfilePic());
+        EventDetails.Attendee current = data.get(position);
+        holder.name.setText(current.getName());
+        holder.userPic.setImageResource(R.drawable.ic_local_bar_black_36dp);
+        holder.invitedYouIcon.setImageResource(R.drawable.ic_person_add_black_24dp);
+        holder.rsvpIcon.setImageResource(R.drawable.ic_check_circle_black_24dp);
     }
 
     public void setClickListener(ClickListener clickListener){
@@ -57,15 +60,17 @@ public class EventDetailsAdapter extends RecyclerView.Adapter<EventDetailsAdapte
 
     class EventDetailsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
-        ImageView pic;
+        ImageView userPic, invitedYouIcon, rsvpIcon;
         TextView name;
 
         public EventDetailsViewHolder(View itemView)
         {
             super(itemView);
             itemView.setOnClickListener(this);
-            pic = (ImageView) itemView.findViewById(R.id.ivCustomRowEventDetailsUserPic);
-            name = (TextView) itemView.findViewById(R.id.tvCustomRowEventDetailsUserName);
+            userPic = (ImageView) itemView.findViewById(R.id.ivEventDetailsListItemUserPic);
+            invitedYouIcon = (ImageView) itemView.findViewById(R.id.ivEventDetailsListItemInvitedYouIcon);
+            rsvpIcon = (ImageView) itemView.findViewById(R.id.ivEventDetailsListItemRsvpIcon);
+            name = (TextView) itemView.findViewById(R.id.tvEventDetailsListItemUserName);
         }
 
         @Override

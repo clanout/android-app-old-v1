@@ -3,6 +3,7 @@ package reaper.app.list.event;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -189,26 +190,26 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             holder.rsvpIcon.setVisibility(View.INVISIBLE);
         }
 
-        if (currentItem.getCategory() == "bar")
-        {
-            holder.eventIcon.setImageResource(R.drawable.ic_local_bar_black_36dp);
-        }
+        holder.eventIcon.setImageResource(R.drawable.ic_local_bar_black_36dp);
 
-        if(Math.random() < 0.5)
+
+        if (Math.random() < 0.5)
         {
             holder.chatIcon.setVisibility(View.VISIBLE);
             holder.chatIcon.setImageResource(R.drawable.ic_chat_black_18dp);
         }
-        else {
+        else
+        {
             holder.chatIcon.setVisibility(View.INVISIBLE);
         }
 
-        if(Math.random() < 0.5)
+        if (Math.random() < 0.5)
         {
             holder.updatesIcon.setVisibility(View.VISIBLE);
             holder.updatesIcon.setImageResource(R.drawable.ic_info_black_18dp);
         }
-        else {
+        else
+        {
             holder.updatesIcon.setVisibility(View.INVISIBLE);
         }
     }
@@ -231,10 +232,10 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
     class EventListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
-
-        ImageView eventIcon, rsvpIcon, chatIcon, updatesIcon;
-        TextView title, timeLocation, attendees, date;
-        Button going, mayBe, notGoing;
+        private CardView cardView;
+        private ImageView eventIcon, rsvpIcon, chatIcon, updatesIcon;
+        private TextView title, timeLocation, attendees, date;
+        private Button going, mayBe, notGoing;
 
         public EventListViewHolder(View itemView)
         {
@@ -243,10 +244,13 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             Log.d("APP", "EventListViewHolder constructor");
 
             final ViewPager viewPager = (ViewPager) itemView;
-            viewPager.setOnClickListener(this);
+//            viewPager.setOnClickListener(this);
 
             EventListViewPagerAdapter adapter = new EventListViewPagerAdapter();
             viewPager.setAdapter(adapter);
+
+            cardView = (CardView) itemView.findViewById(R.id.primaryContentCardView);
+            cardView.setOnClickListener(this);
 
             eventIcon = (ImageView) itemView.findViewById(R.id.ivListItemEventIcon);
             rsvpIcon = (ImageView) itemView.findViewById(R.id.ivListItemEventRsvp);
@@ -314,6 +318,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         @Override
         public void onClick(View v)
         {
+            Log.d("APP", "event summary item clicked position" + getPosition());
             if (eventSummaryItemClickListener != null)
             {
                 eventSummaryItemClickListener.onEventSummaryItemClicked(v, getPosition());

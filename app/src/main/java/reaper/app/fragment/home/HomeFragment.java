@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,6 +30,7 @@ import reaper.api.model.event.Event;
 import reaper.api.model.event.EventDateTimeComparator;
 import reaper.api.model.event.EventDistanceComparator;
 import reaper.api.model.event.EventRelevanceComparator;
+import reaper.app.fragment.event.EventDetailsFragment;
 import reaper.app.list.event.EventListAdapter;
 
 /**
@@ -201,11 +203,11 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
             fragmentManager = getActivity().getSupportFragmentManager();
         }
 
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        EventDetailsFragment eventDetailsFragment = new EventDetailsFragment();
-//        eventDetailsFragment.setEvent(eventList.get(position));
-//        fragmentTransaction.replace(R.id.flMainActivity, eventDetailsFragment, "_Event Details");
-//        fragmentTransaction.commit();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        EventDetailsFragment eventDetailsFragment = new EventDetailsFragment();
+        eventDetailsFragment.setEvent(eventList.get(position));
+        fragmentTransaction.replace(R.id.flMainActivity, eventDetailsFragment, "Event Details");
+        fragmentTransaction.commit();
 
         Log.d("APP", "Event = " + eventList.get(position).getId());
     }
