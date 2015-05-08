@@ -1,11 +1,13 @@
 package reaper.app.fragment.event;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -148,28 +150,6 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    private List<EventDetails.Attendee> getAttendeeList()
-    {
-        EventDetails.Attendee attendee1 = new EventDetails.Attendee();
-        EventDetails.Attendee attendee2 = new EventDetails.Attendee();
-        EventDetails.Attendee attendee3 = new EventDetails.Attendee();
-        EventDetails.Attendee attendee4 = new EventDetails.Attendee();
-
-        attendee1.setName("Harsh Pokharna");
-        attendee2.setName("Aditya Prasad");
-        attendee3.setName("Rohit Gupta");
-        attendee4.setName("gaurav Kunwar");
-
-        List<EventDetails.Attendee> abc = new ArrayList<>();
-        abc.add(attendee1);
-        abc.add(attendee2);
-        abc.add(attendee3);
-        abc.add(attendee4);
-
-        return abc;
-    }
-
-
     @Override
     public void onPause()
     {
@@ -197,7 +177,7 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
     @Override
     public void onClick(View view)
     {
-        if(view.getId() == R.id.tvEventDetailsLocation)
+        if (view.getId() == R.id.tvEventDetailsLocation)
         {
             Toast.makeText(getActivity(), "Location was clicked", Toast.LENGTH_LONG).show();
         }
@@ -217,12 +197,6 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
         }
 
         @Override
-        protected EventDetails doInBackground(Void... params)
-        {
-            return new EventDetails();
-        }
-
-        @Override
         protected void onPostExecute(Object o)
         {
             super.onPostExecute(o);
@@ -230,17 +204,14 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
             try
             {
                 eventDetails = (EventDetails) o;
-               // description.setText(eventDetails.getDescription());
+                description.setText(eventDetails.getDescription());
 
-                description.setText("Please be there by 6pm. Bring your shoes and woolens. No pets allowed.");
+                for (EventDetails.Attendee attendee : eventDetails.getAttendees())
+                {
+                    attendeeList.add(attendee);
+                }
 
-//                for (EventDetails.Attendee attendee : eventDetails.getAttendees())
-//                {
-//                    attendeeList.add(attendee);
-//                }
-
-               // refreshRecyclerView(attendeeList);
-                refreshRecyclerView(getAttendeeList());
+                refreshRecyclerView(attendeeList);
 
             }
             catch (Exception e)

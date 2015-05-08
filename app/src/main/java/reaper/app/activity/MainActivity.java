@@ -9,6 +9,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import java.util.List;
 
@@ -16,6 +19,7 @@ import reaper.R;
 import reaper.api.model.event.Event;
 import reaper.app.backgroundservice.EventFeedListener;
 import reaper.app.backgroundservice.EventFeedService;
+import reaper.app.fragment.accounts.AccountsFragment;
 import reaper.app.fragment.home.HomeFragment;
 import reaper.common.cache.Cache;
 
@@ -25,6 +29,7 @@ import reaper.common.cache.Cache;
 public class MainActivity extends FragmentActivity implements EventFeedListener
 {
     private EventFeedService.EventFeedBinder binder = null;
+    private FragmentManager fragmentManager;
 
     private ServiceConnection eventFeedConnection = new ServiceConnection()
     {
@@ -64,8 +69,9 @@ public class MainActivity extends FragmentActivity implements EventFeedListener
 //        Intent intent = new Intent(this, EventFeedService.class);
 //        startService(intent);
 
+        fragmentManager = getSupportFragmentManager();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.flMainActivity, new HomeFragment(), "Home");
         fragmentTransaction.commit();
@@ -94,6 +100,33 @@ public class MainActivity extends FragmentActivity implements EventFeedListener
     {
         super.onPause();
         Log.d("APP", "onPause");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.action_button, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case R.id.abbAccounts:
+                if (fragmentManager == null)
+                {
+                    fragmentManager = getSupportFragmentManager();
+                }
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.flMainActivity, new AccountsFragment(), "Accounts");
+                fragmentTransaction.commit();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

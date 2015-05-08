@@ -23,6 +23,7 @@ public abstract class EventDetailsApi extends HttpRequestTask
 
         Map<String, String> postData = new HashMap<>();
         postData.put("event_id", id);
+        postData.put("_URI", Uri.EVENT_DETAILS);
 
         setPostData(postData);
     }

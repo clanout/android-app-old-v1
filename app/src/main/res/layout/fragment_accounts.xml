@@ -6,13 +6,10 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:id="@+id/ivAccountProfilePic"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvAccountsName"/>
+        android:layout_height="200dp"
+        android:id="@+id/ivAccountProfilePic"
+        android:src="@drawable/ic_local_bar_black_48dp"
+        />
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"

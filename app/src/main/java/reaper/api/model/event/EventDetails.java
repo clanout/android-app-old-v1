@@ -1,19 +1,16 @@
 package reaper.api.model.event;
 
-import java.util.List;
+import java.util.Set;
 
-import reaper.api.model.core.Model;
-
-/**
- * Created by Aditya on 06-04-2015.
- */
-public class EventDetails implements Model
+public class EventDetails
 {
-    public static class Attendee{
+    public static class Attendee
+    {
         private String id;
         private String name;
+        private Event.RSVP rsvp;
         private boolean isFriend;
-        private EventRsvpStatus rsvp;
+        private boolean isInviter;
 
         public String getId()
         {
@@ -35,6 +32,16 @@ public class EventDetails implements Model
             this.name = name;
         }
 
+        public Event.RSVP getRsvp()
+        {
+            return rsvp;
+        }
+
+        public void setRsvp(Event.RSVP rsvp)
+        {
+            this.rsvp = rsvp;
+        }
+
         public boolean isFriend()
         {
             return isFriend;
@@ -45,18 +52,50 @@ public class EventDetails implements Model
             this.isFriend = isFriend;
         }
 
-        public EventRsvpStatus getRsvp()
+        public boolean isInviter()
         {
-            return rsvp;
+            return isInviter;
         }
 
-        public void setRsvp(EventRsvpStatus rsvp)
+        public void setInviter(boolean isInviter)
         {
-            this.rsvp = rsvp;
+            this.isInviter = isInviter;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return id.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o)
+        {
+            if (o == this)
+            {
+                return true;
+            }
+
+            if (!(o instanceof Attendee))
+            {
+                return false;
+            }
+            else
+            {
+                Attendee other = (Attendee) o;
+                if (id.equals(other.id))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
     }
 
-    public static class InviteListuser
+    public static class Invitee
     {
         private String id;
         private String name;
@@ -80,13 +119,44 @@ public class EventDetails implements Model
         {
             this.name = name;
         }
+
+        @Override
+        public int hashCode()
+        {
+            return id.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o)
+        {
+            if (o == this)
+            {
+                return true;
+            }
+
+            if (!(o instanceof Invitee))
+            {
+                return false;
+            }
+            else
+            {
+                Invitee other = (Invitee) o;
+                if (id.equals(other.id))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
     }
 
     private String id;
     private String description;
-    private List<Attendee> attendees;
-    private List<InviteListuser> invited;
-    private List<InviteListuser> inviters;
+    private Set<Attendee> attendees;
+    private Set<Invitee> invitee;
 
     public String getId()
     {
@@ -108,33 +178,55 @@ public class EventDetails implements Model
         this.description = description;
     }
 
-    public List<Attendee> getAttendees()
+    public Set<Attendee> getAttendees()
     {
         return attendees;
     }
 
-    public void setAttendees(List<Attendee> attendees)
+    public void setAttendees(Set<Attendee> attendees)
     {
         this.attendees = attendees;
     }
 
-    public List<InviteListuser> getInvited()
+    public Set<Invitee> getInvitee()
     {
-        return invited;
+        return invitee;
     }
 
-    public void setInvited(List<InviteListuser> invited)
+    public void setInvitee(Set<Invitee> invitee)
     {
-        this.invited = invited;
+        this.invitee = invitee;
     }
 
-    public List<InviteListuser> getInviters()
+    @Override
+    public int hashCode()
     {
-        return inviters;
+        return id.hashCode();
     }
 
-    public void setInviters(List<InviteListuser> inviters)
+    @Override
+    public boolean equals(Object o)
     {
-        this.inviters = inviters;
+        if (o == this)
+        {
+            return true;
+        }
+
+        if (!(o instanceof EventDetails))
+        {
+            return false;
+        }
+        else
+        {
+            EventDetails other = (EventDetails) o;
+            if (id.equals(other.id))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }
