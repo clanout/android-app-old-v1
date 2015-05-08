@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'johankeystore'
-            keyPassword 'firebolt'
-            storeFile file('D:/codeX/projects/johan/deploy/android/johan.jks')
-            storePassword 'firebolt'
-        }
-    }
+//    signingConfigs {
+//        config {
+//            keyAlias 'johankeystore'
+//            keyPassword 'firebolt'
+//            storeFile file('D:/codeX/projects/johan/deploy/android/johan.jks')
+//            storePassword 'firebolt'
+//        }
+//    }
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
     packagingOptions {
@@ -30,16 +30,16 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
-        signingConfig signingConfigs.config
+//       signingConfig signingConfigs.config
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+//            signingConfig signingConfigs.config
         }
         debug {
-            signingConfig signingConfigs.config
+//            signingConfig signingConfigs.config
         }
     }
     repositories {
