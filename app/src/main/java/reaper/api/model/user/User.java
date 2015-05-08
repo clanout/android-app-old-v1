@@ -8,26 +8,27 @@ import reaper.api.model.core.Model;
 public class User implements Model
 {
     private String id;
-    private String firstname;
-    private String lastname;
+    private String name;
     private boolean isBlocked;
-    private boolean isSubscribed;
-    private boolean isFriend;
-    public int profilePic;
 
     public String getId()
     {
         return id;
     }
 
-    public String getFirstname()
+    public void setId(String id)
     {
-        return firstname;
+        this.id = id;
     }
 
-    public String getLastname()
+    public String getName()
     {
-        return lastname;
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
     public boolean isBlocked()
@@ -35,18 +36,8 @@ public class User implements Model
         return isBlocked;
     }
 
-    public boolean isSubscribed()
+    public void setBlocked(boolean isBlocked)
     {
-        return isSubscribed;
-    }
-
-    public boolean isFriend()
-    {
-        return isFriend;
-    }
-
-    public int getProfilePic()
-    {
-        return profilePic;
+        this.isBlocked = isBlocked;
     }
 }

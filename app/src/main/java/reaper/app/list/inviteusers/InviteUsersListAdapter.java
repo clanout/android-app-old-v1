@@ -42,8 +42,8 @@ public class InviteUsersListAdapter extends RecyclerView.Adapter<InviteUsersList
     public void onBindViewHolder(InviteUsersViewHolder holder, int position)
     {
         User current = data.get(position);
-        holder.userPic.setImageResource(current.getProfilePic());
-        holder.username.setText(current.getFirstname() + " " + current.getLastname());
+        holder.userPic.setImageResource(R.drawable.ic_check_circle_black_24dp);
+        holder.username.setText(current.getName());
     }
 
     public void setClickListener(ClickListener clickListener){

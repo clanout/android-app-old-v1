@@ -2,7 +2,9 @@ package reaper.api.endpoints.accounts;
 
 import android.content.Context;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import reaper.api.constants.Uri;
 import reaper.api.model.core.BasicJsonParser;
@@ -20,6 +22,11 @@ public abstract class FriendListApi extends HttpRequestTask {
 
     public FriendListApi(Context context) {
         super(UrlBuilder.build(Uri.MY_FRIENDS_LIST), context);
+
+        Map<String, String> postData = new HashMap<>();
+        postData.put("_URI", Uri.MY_FRIENDS_LIST);
+
+        setPostData(postData);
     }
 
     @Override
@@ -27,7 +34,7 @@ public abstract class FriendListApi extends HttpRequestTask {
         String jsonResponse = (String) super.doInBackground(params);
         if (jsonResponse != null)
         {
-            List<String> friends = BasicJsonParser.getList(jsonResponse, "friend_list");
+            List<String> friends = BasicJsonParser.getList(jsonResponse, "friends");
             List<User> friendList = ModelFactory.createModelList(friends, User.class);
             return friendList;
 

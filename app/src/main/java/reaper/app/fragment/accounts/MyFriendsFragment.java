@@ -50,6 +50,7 @@ public class MyFriendsFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         mainContent.setVisibility(View.VISIBLE);
         noFriendsMessage.setVisibility(View.GONE);
 

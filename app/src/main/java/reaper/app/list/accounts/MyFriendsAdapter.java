@@ -43,7 +43,7 @@ public class MyFriendsAdapter extends RecyclerView.Adapter<MyFriendsAdapter.MyFr
     {
         User current = friendsList.get(position);
 
-        holder.username.setText(current.getFirstname() + " " + current.getLastname());
+        holder.username.setText(current.getName());
         holder.userPic.setImageResource(R.drawable.ic_local_bar_black_48dp);
         holder.blockStatus.setImageResource(R.drawable.ic_check_circle_black_24dp);
 
