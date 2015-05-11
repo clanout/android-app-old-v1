@@ -33,12 +33,12 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/etCreateEventTime"/>
+            android:id="@+id/etCreateEventStartDateTime"/>
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/etCreateEventDate"/>
+            android:id="@+id/etCreateEventEndDateTime"/>
 
         <EditText
             android:layout_width="wrap_content"
@@ -55,21 +55,8 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:id="@+id/bCreateEventCancel"
-            android:text="Cancel"/>
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
             android:id="@+id/bCreateEventCreate"
-            android:text="Create"/>
+            android:text="Create and Invite"/>
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/bCreateEventLock"
-            android:text="Lock"/>
     </LinearLayout>
 </LinearLayout>

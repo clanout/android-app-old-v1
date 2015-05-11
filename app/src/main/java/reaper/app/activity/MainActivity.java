@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -20,38 +21,34 @@ import reaper.api.model.event.Event;
 import reaper.app.backgroundservice.EventFeedListener;
 import reaper.app.backgroundservice.EventFeedService;
 import reaper.app.fragment.accounts.AccountsFragment;
+import reaper.app.fragment.event.CreateEventDialogFragment;
 import reaper.app.fragment.home.HomeFragment;
 import reaper.common.cache.Cache;
 
 /**
  * Created by reaper on 05-04-2015.
  */
-public class MainActivity extends FragmentActivity implements EventFeedListener
-{
+public class MainActivity extends FragmentActivity implements EventFeedListener {
     private EventFeedService.EventFeedBinder binder = null;
     private FragmentManager fragmentManager;
     private Menu menu;
 
-    private ServiceConnection eventFeedConnection = new ServiceConnection()
-    {
+    private ServiceConnection eventFeedConnection = new ServiceConnection() {
         @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder)
-        {
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             Log.d("APP", "activity connected");
             binder = (EventFeedService.EventFeedBinder) iBinder;
             binder.setEventFeedListener(MainActivity.this);
         }
 
         @Override
-        public void onServiceDisconnected(ComponentName componentName)
-        {
+        public void onServiceDisconnected(ComponentName componentName) {
             binder = null;
         }
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -79,20 +76,18 @@ public class MainActivity extends FragmentActivity implements EventFeedListener
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
 //        Intent intent = new Intent(this, EventFeedService.class);
 //        bindService(intent, eventFeedConnection, BIND_AUTO_CREATE);
     }
 
-    public Menu getMenu(){
+    public Menu getMenu() {
         return menu;
     }
 
     @Override
-    protected void onStop()
-    {
+    protected void onStop() {
         super.onStop();
         Cache.commit(this);
         Log.d("APP", "onStop");
@@ -101,15 +96,13 @@ public class MainActivity extends FragmentActivity implements EventFeedListener
     }
 
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         super.onPause();
         Log.d("APP", "onPause");
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.action_button, menu);
         this.menu = menu;
@@ -122,35 +115,41 @@ public class MainActivity extends FragmentActivity implements EventFeedListener
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId())
-        {
-            case R.id.abbAccounts:
-                if (fragmentManager == null)
-                {
-                    fragmentManager = getSupportFragmentManager();
-                }
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.flMainActivity, new AccountsFragment(), "Accounts");
-                fragmentTransaction.commit();
-                return true;
-            case R.id.abbHome:
-                if (fragmentManager == null)
-                {
-                    fragmentManager = getSupportFragmentManager();
-                }
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.flMainActivity, new HomeFragment(), "HomeFragment");
-                transaction.commit();
-            default:
-                return super.onOptionsItemSelected(item);
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.abbAccounts) {
+            if (fragmentManager == null) {
+                fragmentManager = getSupportFragmentManager();
+            }
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.flMainActivity, new AccountsFragment(), "Accounts");
+            fragmentTransaction.commit();
+            return true;
         }
+
+        if (item.getItemId() == R.id.abbHome) {
+            if (fragmentManager == null) {
+                fragmentManager = getSupportFragmentManager();
+            }
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.flMainActivity, new HomeFragment(), "HomeFragment");
+            transaction.commit();
+        }
+
+        if (item.getItemId() == R.id.abbCreateEvent) {
+            if (fragmentManager == null) {
+                fragmentManager = getSupportFragmentManager();
+            }
+            DialogFragment createEventDialog = new CreateEventDialogFragment();
+            createEventDialog.show(fragmentManager, "Create Event Dialog");
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
+
     @Override
-    public void onEventFeedUpdate(List<Event> events)
-    {
+    public void onEventFeedUpdate(List<Event> events) {
         Log.d("APP", "Event feed updated");
     }
 

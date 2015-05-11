@@ -50,7 +50,6 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d("APP", "onCreateView");
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.rvEventsList);
         mainContent = (LinearLayout) view.findViewById(R.id.llHomefragmentMainContent);

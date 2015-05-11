@@ -12,7 +12,7 @@ import reaper.conf.Constants;
 public abstract class HttpRequestTask extends AsyncTask<Void, Void, Object>
 {
     protected String url;
-    protected Map<String, String> postData;
+    private Map<String, String> postData;
     protected Context context;
 
     public HttpRequestTask(String url, Context context)

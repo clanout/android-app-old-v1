@@ -58,7 +58,6 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
     public EventListAdapter(Context context, List<Event> data)
     {
-        Log.d("APP", "EventAdapter constructor");
 
         inflater = LayoutInflater.from(context);
         this.data = data;
@@ -74,17 +73,10 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     @Override
     public EventListViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        Log.d("APP", "onCreateViewHolder");
-//        View view = inflater.inflate(R.layout.list_item_event_summary, parent, false);
-//        EventListViewHolder eventListViewHolder = new EventListViewHolder(view);
-//        return eventListViewHolder;
 
         // Create a new view which is basically just a ViewPager in this case
         ViewPager v = (ViewPager) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_event_summary, parent, false);
-//        EventListViewPagerAdapter adapter = new EventListViewPagerAdapter();
-//
-//        ((ViewPager) v.findViewById(R.id.viewPager)).setAdapter(adapter);
 
         //Perhaps the first most crucial part. The ViewPager loses its width information when it is put
         //inside a RecyclerView. It needs to be explicitly resized, in this case to the width of the
@@ -100,7 +92,6 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     @Override
     public void onBindViewHolder(EventListViewHolder holder, final int position)
     {
-        Log.d("APP", "onBindViewHolder");
         final ViewPager viewPager = (ViewPager) holder.itemView;
 
         ((ViewPager) holder.itemView).setCurrentItem(itemSwipedStates.get(position).getPosition());
@@ -241,10 +232,8 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         {
             super(itemView);
 
-            Log.d("APP", "EventListViewHolder constructor");
 
             final ViewPager viewPager = (ViewPager) itemView;
-//            viewPager.setOnClickListener(this);
 
             EventListViewPagerAdapter adapter = new EventListViewPagerAdapter();
             viewPager.setAdapter(adapter);
@@ -318,7 +307,6 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         @Override
         public void onClick(View v)
         {
-            Log.d("APP", "event summary item clicked position" + getPosition());
             if (eventSummaryItemClickListener != null)
             {
                 eventSummaryItemClickListener.onEventSummaryItemClicked(v, getPosition());
