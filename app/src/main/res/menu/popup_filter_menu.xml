@@ -6,7 +6,7 @@
         android:title="Only Today"/>
 
     <item
-        android:id="@+id/itemWeekend"
-        android:title="Until Weekend"/>
+        android:id="@+id/itemAllEvents"
+        android:title="All Events"/>
 
 </menu>

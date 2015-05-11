@@ -23,7 +23,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tvCustomRowAccountTitle"/>
+        android:id="@+id/tvCustomRowAccountTitle"
+        android:textSize="20sp"/>
 
 
 </LinearLayout>

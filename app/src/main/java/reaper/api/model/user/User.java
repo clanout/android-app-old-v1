@@ -40,4 +40,38 @@ public class User implements Model
     {
         this.isBlocked = isBlocked;
     }
+
+
+    @Override
+    public int hashCode()
+    {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o == this)
+        {
+            return true;
+        }
+
+        if (!(o instanceof User))
+        {
+            return false;
+        }
+        else
+        {
+            User other = (User) o;
+            if (id.equals(other.id))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
 }

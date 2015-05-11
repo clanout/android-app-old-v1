@@ -4,8 +4,42 @@
 
     <item
         android:id="@+id/abbAccounts"
-        android:icon="@drawable/abc_ic_menu_copy_mtrl_am_alpha"
+        android:icon="@drawable/ic_action_accounts"
         android:showAsAction="always"
         tools:ignore="AppCompatResource"
+        android:orderInCategory="2"
         android:title="Accounts"/>
+
+    <item
+        android:id="@+id/abbHome"
+        android:icon="@drawable/ic_action_event"
+        android:showAsAction="ifRoom"
+        android:title="Home"
+        android:orderInCategory="4"
+        tools:ignore="AppCompatResource" />
+
+    <item
+        android:id="@+id/abbCreateEvent"
+        android:icon="@drawable/ic_action_new"
+        android:showAsAction="always"
+        android:title="Create Event"
+        android:orderInCategory="1"
+        tools:ignore="AppCompatResource" />
+
+    <item
+        android:id="@+id/abbEditEvent"
+        android:icon="@drawable/ic_action_edit"
+        android:showAsAction="always"
+        android:title= "Edit Event"
+        android:orderInCategory="5"
+        tools:ignore="AppCompatResource" />
+
+    <item
+        android:id="@+id/abbSearch"
+        android:icon="@drawable/ic_action_search"
+        android:showAsAction="always"
+        android:title="Search"
+        android:orderInCategory="3"
+        android:actionViewClass="android.widget.SearchView"
+        tools:ignore="AppCompatResource" />
 </menu>

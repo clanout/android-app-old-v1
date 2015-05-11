@@ -30,6 +30,7 @@ public class MainActivity extends FragmentActivity implements EventFeedListener
 {
     private EventFeedService.EventFeedBinder binder = null;
     private FragmentManager fragmentManager;
+    private Menu menu;
 
     private ServiceConnection eventFeedConnection = new ServiceConnection()
     {
@@ -85,6 +86,10 @@ public class MainActivity extends FragmentActivity implements EventFeedListener
 //        bindService(intent, eventFeedConnection, BIND_AUTO_CREATE);
     }
 
+    public Menu getMenu(){
+        return menu;
+    }
+
     @Override
     protected void onStop()
     {
@@ -107,6 +112,12 @@ public class MainActivity extends FragmentActivity implements EventFeedListener
     {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.action_button, menu);
+        this.menu = menu;
+        menu.findItem(R.id.abbAccounts).setVisible(true);
+        menu.findItem(R.id.abbCreateEvent).setVisible(true);
+        menu.findItem(R.id.abbHome).setVisible(false);
+        menu.findItem(R.id.abbEditEvent).setVisible(false);
+        menu.findItem(R.id.abbSearch).setVisible(false);
         return true;
     }
 
@@ -124,6 +135,14 @@ public class MainActivity extends FragmentActivity implements EventFeedListener
                 fragmentTransaction.replace(R.id.flMainActivity, new AccountsFragment(), "Accounts");
                 fragmentTransaction.commit();
                 return true;
+            case R.id.abbHome:
+                if (fragmentManager == null)
+                {
+                    fragmentManager = getSupportFragmentManager();
+                }
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.flMainActivity, new HomeFragment(), "HomeFragment");
+                transaction.commit();
             default:
                 return super.onOptionsItemSelected(item);
         }

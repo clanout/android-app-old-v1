@@ -45,7 +45,12 @@ public class MyFriendsAdapter extends RecyclerView.Adapter<MyFriendsAdapter.MyFr
 
         holder.username.setText(current.getName());
         holder.userPic.setImageResource(R.drawable.ic_local_bar_black_48dp);
-        holder.blockStatus.setImageResource(R.drawable.ic_check_circle_black_24dp);
+
+        if(current.isBlocked()) {
+            holder.blockStatus.setImageResource(R.drawable.ic_action_important);
+        }else{
+            holder.blockStatus.setImageResource(R.drawable.ic_action_not_important);
+        }
 
     }
 
