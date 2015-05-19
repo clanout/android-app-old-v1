@@ -12,6 +12,7 @@ public class Uri
     public static final String EVENT_DELETE = "event/delete";
     public static final String EVENT_RSVP = "event/rsvp";
     public static final String EVENT_INVITE = "event/invite";
+    public static final String EVENT_SUGGESTIONS = "event/recommendations";
 
     public static final String USER_EVENTS = "user/events";
 

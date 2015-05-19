@@ -1,5 +1,6 @@
 package reaper.app.fragment.home;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,12 +10,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -25,6 +24,7 @@ import java.util.List;
 
 import reaper.R;
 import reaper.api.endpoints.event.EventListApi;
+import reaper.api.endpoints.event.EventUpdateRsvpApi;
 import reaper.api.model.event.Event;
 import reaper.api.model.event.EventDateTimeComparator;
 import reaper.api.model.event.EventDistanceComparator;
@@ -32,13 +32,16 @@ import reaper.api.model.event.EventRelevanceComparator;
 import reaper.app.activity.MainActivity;
 import reaper.app.fragment.event.EventDetailsFragment;
 import reaper.app.list.event.EventListAdapter;
+import reaper.conf.AppPreferences;
+import reaper.conf.Constants;
 
 /**
  * Created by reaper on 04-04-2015.
  */
 public class HomeFragment extends Fragment implements EventListAdapter.EventSummaryItemClickListener, View.OnClickListener, EventListAdapter.RsvpClickListener {
     private FragmentManager fragmentManager;
-    private ApiTask apiTask;
+    private EventListApiTask eventListApiTask;
+    private RsvpUpdateThread rsvpUpdateThread;
 
     private List<Event> eventList;
 
@@ -87,8 +90,8 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
     public void onResume() {
         super.onResume();
 
-        apiTask = new ApiTask();
-        apiTask.execute();
+        eventListApiTask = new EventListApiTask();
+        eventListApiTask.execute();
 
         if (((MainActivity) getActivity()).getMenu() != null) {
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbAccounts).setVisible(true);
@@ -96,6 +99,8 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbHome).setVisible(false);
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbEditEvent).setVisible(false);
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbSearch).setVisible(false);
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.abbFinaliseEvent).setVisible(false);
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.abbDeleteEvent).setVisible(false);
         }
     }
 
@@ -103,8 +108,8 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
     public void onPause() {
         super.onPause();
 
-        if (apiTask != null) {
-            apiTask.cancel(true);
+        if (eventListApiTask != null) {
+            eventListApiTask.cancel(true);
         }
     }
 
@@ -222,12 +227,25 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
 
     @Override
     public void onRsvpButtonClicked(View view, int buttonId, int position) {
+        if(buttonId == 0){
+            rsvpUpdateThread = new RsvpUpdateThread(getActivity(), eventList.get(position).getId(), Event.RSVP.YES);
+            rsvpUpdateThread.start();
+        }
 
+        if(buttonId == 1){
+            rsvpUpdateThread = new RsvpUpdateThread(getActivity(), eventList.get(position).getId(), Event.RSVP.MAYBE);
+            rsvpUpdateThread.start();
+        }
+
+        if(buttonId == 2){
+            rsvpUpdateThread = new RsvpUpdateThread(getActivity(), eventList.get(position).getId(), Event.RSVP.NO);
+            rsvpUpdateThread.start();
+        }
     }
 
-    private class ApiTask extends EventListApi {
-        public ApiTask() {
-            super(HomeFragment.this.getActivity(), "Bangalore");
+    private class EventListApiTask extends EventListApi {
+        public EventListApiTask() {
+            super(HomeFragment.this.getActivity(), AppPreferences.get(HomeFragment.this.getActivity(), Constants.Location.ZONE));
         }
 
         @Override
@@ -237,6 +255,13 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
                 refreshRecyclerView();
             } catch (Exception e) {
             }
+        }
+    }
+
+    private class RsvpUpdateThread extends EventUpdateRsvpApi {
+
+        public RsvpUpdateThread(Context context, String eventId, Event.RSVP rsvp) {
+            super(context, eventId, rsvp);
         }
     }
 }

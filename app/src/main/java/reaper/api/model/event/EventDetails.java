@@ -1,5 +1,6 @@
 package reaper.api.model.event;
 
+import java.util.List;
 import java.util.Set;
 
 public class EventDetails
@@ -155,8 +156,8 @@ public class EventDetails
 
     private String id;
     private String description;
-    private Set<Attendee> attendees;
-    private Set<Invitee> invitee;
+    private List<Attendee> attendees;
+    private List<Invitee> invitee;
 
     public String getId()
     {
@@ -178,22 +179,22 @@ public class EventDetails
         this.description = description;
     }
 
-    public Set<Attendee> getAttendees()
+    public List<Attendee> getAttendees()
     {
         return attendees;
     }
 
-    public void setAttendees(Set<Attendee> attendees)
+    public void setAttendees(List<Attendee> attendees)
     {
         this.attendees = attendees;
     }
 
-    public Set<Invitee> getInvitee()
+    public List<Invitee> getInvitee()
     {
         return invitee;
     }
 
-    public void setInvitee(Set<Invitee> invitee)
+    public void setInvitee(List<Invitee> invitee)
     {
         this.invitee = invitee;
     }

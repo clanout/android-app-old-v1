@@ -143,7 +143,7 @@ public class LocationService
     }
 
 
-    private String getZoneFromLocation(double latitude, double longitude)
+    public String getZoneFromLocation(double latitude, double longitude)
     {
         if(latitude == 0 || longitude ==0){
             return null;

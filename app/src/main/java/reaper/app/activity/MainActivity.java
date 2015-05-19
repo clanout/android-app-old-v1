@@ -21,9 +21,11 @@ import reaper.api.model.event.Event;
 import reaper.app.backgroundservice.EventFeedListener;
 import reaper.app.backgroundservice.EventFeedService;
 import reaper.app.fragment.accounts.AccountsFragment;
-import reaper.app.fragment.event.CreateEventDialogFragment;
+import reaper.app.fragment.event.dialogfragment.CreateEventDialogFragment;
 import reaper.app.fragment.home.HomeFragment;
 import reaper.common.cache.Cache;
+import reaper.conf.AppPreferences;
+import reaper.conf.Constants;
 
 /**
  * Created by reaper on 05-04-2015.
@@ -36,7 +38,6 @@ public class MainActivity extends FragmentActivity implements EventFeedListener 
     private ServiceConnection eventFeedConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            Log.d("APP", "activity connected");
             binder = (EventFeedService.EventFeedBinder) iBinder;
             binder.setEventFeedListener(MainActivity.this);
         }
@@ -52,7 +53,6 @@ public class MainActivity extends FragmentActivity implements EventFeedListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d("APP", "activity created");
 
 //        LocationService locationService = new LocationService(this);
 //
@@ -66,6 +66,11 @@ public class MainActivity extends FragmentActivity implements EventFeedListener 
 //
 //        Intent intent = new Intent(this, EventFeedService.class);
 //        startService(intent);
+
+        AppPreferences.set(this, Constants.Location.LATITUDE, "12.9738");
+        AppPreferences.set(this, Constants.Location.LONGITUDE, "77.6119");
+        AppPreferences.set(this, Constants.Location.ZONE, "Bengaluru");
+        AppPreferences.set(this, Constants.AppPreferenceKeys.ME, "9320369679");
 
         fragmentManager = getSupportFragmentManager();
 
@@ -111,6 +116,8 @@ public class MainActivity extends FragmentActivity implements EventFeedListener 
         menu.findItem(R.id.abbHome).setVisible(false);
         menu.findItem(R.id.abbEditEvent).setVisible(false);
         menu.findItem(R.id.abbSearch).setVisible(false);
+        menu.findItem(R.id.abbDeleteEvent).setVisible(false);
+        menu.findItem(R.id.abbFinaliseEvent).setVisible(false);
         return true;
     }
 

@@ -35,6 +35,22 @@
         tools:ignore="AppCompatResource" />
 
     <item
+        android:id="@+id/abbFinaliseEvent"
+        android:icon="@drawable/ic_action_secure"
+        android:showAsAction="always"
+        android:title= "Finalise Event"
+        android:orderInCategory="6"
+        tools:ignore="AppCompatResource" />
+
+    <item
+        android:id="@+id/abbDeleteEvent"
+        android:icon="@drawable/ic_action_discard"
+        android:showAsAction="always"
+        android:title= "Delete Event"
+        android:orderInCategory="7"
+        tools:ignore="AppCompatResource" />
+
+    <item
         android:id="@+id/abbSearch"
         android:icon="@drawable/ic_action_search"
         android:showAsAction="always"

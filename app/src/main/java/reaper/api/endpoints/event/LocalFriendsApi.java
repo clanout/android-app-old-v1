@@ -1,4 +1,4 @@
-package reaper.api.endpoints.accounts;
+package reaper.api.endpoints.event;
 
 import android.content.Context;
 
@@ -14,17 +14,16 @@ import reaper.api.model.user.User;
 import reaper.common.http.HttpRequestTask;
 import reaper.common.http.UrlBuilder;
 
-
 /**
- * Created by harsh on 08-05-2015.
+ * Created by harsh on 14-05-2015.
  */
-public abstract class FriendListApi extends HttpRequestTask {
+public class LocalFriendsApi extends HttpRequestTask {
 
-
-    public FriendListApi(Context context) {
+    public LocalFriendsApi(Context context, String zone) {
         super(UrlBuilder.build(Uri.MY_FRIENDS_LIST), context);
 
         Map<String, String> postData = new HashMap<>();
+        postData.put("zone", zone);
         postData.put("_URI", Uri.MY_FRIENDS_LIST);
 
         setPostData(postData);

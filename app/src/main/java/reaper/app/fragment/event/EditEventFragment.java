@@ -1,6 +1,8 @@
 package reaper.app.fragment.event;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -42,7 +45,8 @@ import java.util.List;
 import java.util.Map;
 
 import reaper.R;
-import reaper.api.endpoints.event.EventCreateApi;
+import reaper.api.endpoints.event.EventDeleteApi;
+import reaper.api.endpoints.event.EventEditApi;
 import reaper.api.endpoints.event.EventSuggestionsApi;
 import reaper.api.model.core.BasicJsonParser;
 import reaper.api.model.event.Event;
@@ -53,41 +57,47 @@ import reaper.app.activity.MainActivity;
 import reaper.app.fragment.event.dialogfragment.ChangeEventCategoryTypeDialogFragment;
 import reaper.app.fragment.event.dialogfragment.SelectTimeDialogFragment;
 import reaper.app.fragment.event.dialogfragment.SelectedTimeCommunicator;
+import reaper.app.fragment.home.HomeFragment;
 import reaper.app.list.event.EventSuggestionsAdapter;
+import reaper.app.service.EventUtils;
 import reaper.app.service.LocationService;
 import reaper.common.http.HttpRequest;
 import reaper.conf.AppPreferences;
 import reaper.conf.Constants;
 
 /**
- * Created by Aditya on 06-04-2015.
+ * Created by harsh on 18-05-2015.
  */
-public class CreateEventFragment extends Fragment implements View.OnClickListener, SelectedTimeCommunicator, AdapterView.OnItemClickListener, EventSuggestionsAdapter.EventSuggestionsClickListener, EventCategoryTypeCommunicator {
+public class EditEventFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener, SelectedTimeCommunicator, EventSuggestionsAdapter.EventSuggestionsClickListener, MenuItem.OnMenuItemClickListener {
 
     private ImageView eventIcon;
-    private Button create;
-    private EditText title, description;
-    private LinearLayout timings, timingsWithClock;
+    private TextView eventTitle, startDateTimeTextView, endDateTimeTextView, noSuggestionsMessage;
+    private LinearLayout timingsWithClock, suggestionsBox;
+    private AutoCompleteTextView autoCompleteTextView;
+    private EditText description;
+    private RecyclerView recyclerView;
+    private Button done, cancel;
+    private EventSuggestionsAdapter eventSuggestionsAdapter;
+
+    private SelectTimeDialogFragment selectTimeDialogFragment;
+    private FragmentManager fragmentManager;
+
+    private List<Suggestion> suggestionList;
+    private boolean isDoneClicked;
+    private boolean isPlaceDetailsTaskRunning;
     private Event.Type eventType;
     private EventCategory eventCategory;
-    private TextView startDateTimeTextView, endDateTimeTextView;
-    private RecyclerView recyclerView;
-    private EventSuggestionsAdapter eventSuggestionsAdapter;
-    private List<Suggestion> suggestionList;
+    private String placeId;
+    private Event oldEvent;
+    private EventDetails oldEventDetails;
 
-    private LinearLayout suggestionsBox;
-    private TextView noSuggestionsMessage;
-
-    private FragmentManager fragmentManager;
-    private CreateEventApiTask createEventApiTask;
+    private EditEventApiTask editEventApiTask;
     private EventSuggestionsApiTask eventSuggestionsApiTask;
+    private GooglePlaceDetailsTask googlePlaceDetailsTask;
+    private EventDeleteApiThread eventDeleteApiThread;
 
     private DateTime startDateTime, endDateTime;
-    private SelectTimeDialogFragment selectTimeDialogFragment;
-    private AutoCompleteTextView autoCompleteTextView;
-    private String placeId;
-
-    private boolean isPlaceDetailsTaskRunning, isCreateEventButtonClicked;
+    private DateTimeFormatter dateFormatter, timeFormatter;
 
     private static final String APIKEY = "AIzaSyDBX362r-1isovteBR3tGN3QQtDcQn-jyg";
     private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
@@ -95,39 +105,39 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
     private static final String PLACE_DETAILS_URL = "https://maps.googleapis.com/maps/api/place/details/json?";
 
-    private static ArrayList resultList, resultListPlaceId;
-    private GooglePlaceDetailsTask googlePlaceDetailsTask;
-
     private String locationZone;
     private String locationName;
     private String longitude;
     private String latitude;
 
-    private static String userLatitude, userLongitude, userZone;
+    private String userLatitude, userLongitude, userZone;
+
+    private boolean isEventFinalised;
+
+    private static ArrayList resultList, resultListPlaceId;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_create_event, container, false);
-        eventIcon = (ImageView) view.findViewById(R.id.ivCreateEventIcon);
-        create = (Button) view.findViewById(R.id.bCreateEventCreate);
-        title = (EditText) view.findViewById(R.id.etCreateEventTitle);
-        description = (EditText) view.findViewById(R.id.etCreateEventDescription);
-        timings = (LinearLayout) view.findViewById(R.id.llCreateEventSelectTime);
-        timingsWithClock = (LinearLayout) view.findViewById(R.id.llCreateEventSelectTimeWithClock);
-        startDateTimeTextView = (TextView) view.findViewById(R.id.tvCreateEventStartDateTime);
-        endDateTimeTextView = (TextView) view.findViewById(R.id.tvCreateEventEndDateTime);
-        recyclerView = (RecyclerView) view.findViewById(R.id.rvCreateEvent);
-        suggestionsBox = (LinearLayout) view.findViewById(R.id.llCreateEventSuggestions);
-        noSuggestionsMessage = (TextView) view.findViewById(R.id.tvCreateEventNoSuggestions);
+        View view = inflater.inflate(R.layout.fragment_edit_event, container, false);
+        eventIcon = (ImageView) view.findViewById(R.id.ivEditEventIcon);
+        done = (Button) view.findViewById(R.id.bEditEventDone);
+        cancel = (Button) view.findViewById(R.id.bEditEventCancel);
+        eventTitle = (TextView) view.findViewById(R.id.tvEditEventTitle);
+        description = (EditText) view.findViewById(R.id.etEditEventDescription);
+        timingsWithClock = (LinearLayout) view.findViewById(R.id.llEditEventSelectTimeWithClock);
+        startDateTimeTextView = (TextView) view.findViewById(R.id.tvEditEventStartDateTime);
+        endDateTimeTextView = (TextView) view.findViewById(R.id.tvEditEventEndDateTime);
+        recyclerView = (RecyclerView) view.findViewById(R.id.rvEditEvent);
+        suggestionsBox = (LinearLayout) view.findViewById(R.id.llEditEventSuggestions);
+        noSuggestionsMessage = (TextView) view.findViewById(R.id.tvEditEventNoSuggestions);
 
-        autoCompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.actvCreateEvent);
+        autoCompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.actvEditEvent);
         autoCompleteTextView.setAdapter(new GooglePlacesAutocompleteAdapter(getActivity(), R.layout.list_item_autocomplete));
         autoCompleteTextView.setOnItemClickListener(this);
 
         return view;
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -136,28 +146,57 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         suggestionsBox.setVisibility(View.VISIBLE);
         noSuggestionsMessage.setVisibility(View.GONE);
 
-        eventIcon.setOnClickListener(this);
-        timings.setOnClickListener(this);
-        timingsWithClock.setOnClickListener(this);
-        create.setOnClickListener(this);
-
         eventIcon.setImageResource(R.drawable.ic_local_bar_black_48dp);
-        timingsWithClock.setVisibility(View.GONE);
+        eventTitle.setText(oldEvent.getTitle());
 
-        selectTimeDialogFragment = new SelectTimeDialogFragment();
-        selectTimeDialogFragment.setSelectedTimeCommunicator(this);
+        dateFormatter = DateTimeFormat.forPattern("MMM dd");
+        timeFormatter = DateTimeFormat.forPattern("HH:mm");
+        startDateTime = oldEvent.getStartTime();
+        endDateTime = oldEvent.getEndTime();
+        startDateTimeTextView.setText(oldEvent.getStartTime().toString(timeFormatter) + ", " + oldEvent.getStartTime().toString(dateFormatter));
+        endDateTimeTextView.setText(oldEvent.getEndTime().toString(timeFormatter) + ", " + oldEvent.getEndTime().toString(dateFormatter));
 
-        suggestionList = new ArrayList<>();
-        isCreateEventButtonClicked = false;
-        isPlaceDetailsTaskRunning = false;
+        autoCompleteTextView.setText(oldEvent.getLocation().getName());
+        description.setText(oldEventDetails.getDescription());
+        eventType = oldEvent.getType();
 
-        fragmentManager = getActivity().getSupportFragmentManager();
+        try {
+            eventCategory = EventCategory.valueOf(oldEvent.getCategory());
+        }catch(Exception e){
+            eventCategory = EventCategory.GENERAL;
+        }
+
+        latitude = String.valueOf(oldEvent.getLocation().getY());
+        longitude = String.valueOf(oldEvent.getLocation().getY());
+        locationName = oldEvent.getLocation().getName();
+        locationZone = oldEvent.getLocation().getZone();
 
         userLatitude = AppPreferences.get(getActivity(), Constants.Location.LATITUDE);
         userLongitude = AppPreferences.get(getActivity(), Constants.Location.LONGITUDE);
         userZone = AppPreferences.get(getActivity(), Constants.Location.ZONE);
 
+
+        timingsWithClock.setOnClickListener(this);
+        done.setOnClickListener(this);
+        cancel.setOnClickListener(this);
+
+        selectTimeDialogFragment = new SelectTimeDialogFragment();
+        selectTimeDialogFragment.setSelectedTimeCommunicator(this);
+
+        suggestionList = new ArrayList<>();
+        isDoneClicked = false;
+        isPlaceDetailsTaskRunning = false;
+
+        fragmentManager = getActivity().getSupportFragmentManager();
+
+        isEventFinalised = oldEvent.isFinalized();
+
         initRecyclerView();
+    }
+
+    public void setOldEvent(Event oldEvent, EventDetails oldEventDetails) {
+        this.oldEvent = oldEvent;
+        this.oldEventDetails = oldEventDetails;
     }
 
     private void initRecyclerView() {
@@ -191,8 +230,8 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     public void onPause() {
         super.onPause();
 
-        if (createEventApiTask != null) {
-            createEventApiTask.cancel(true);
+        if (editEventApiTask != null) {
+            editEventApiTask.cancel(true);
         }
 
         if (eventSuggestionsApiTask != null) {
@@ -207,7 +246,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     @Override
     public void onStart() {
         super.onStart();
-        getActivity().getActionBar().setTitle("Create Event");
+        getActivity().getActionBar().setTitle("Edit Event");
     }
 
     @Override
@@ -230,10 +269,19 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbEditEvent).setVisible(false);
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbFinaliseEvent).setVisible(false);
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbDeleteEvent).setVisible(false);
+
+            if (EventUtils.canDeleteEvent(oldEvent)) {
+                ((MainActivity) getActivity()).getMenu().findItem(R.id.abbFinaliseEvent).setVisible(true);
+                ((MainActivity) getActivity()).getMenu().findItem(R.id.abbFinaliseEvent).setOnMenuItemClickListener(this);
+                ((MainActivity) getActivity()).getMenu().findItem(R.id.abbDeleteEvent).setVisible(true);
+                ((MainActivity) getActivity()).getMenu().findItem(R.id.abbDeleteEvent).setOnMenuItemClickListener(this);
+
+            }
         }
 
 
     }
+
 
     public ArrayList autoComplete(String input) {
 
@@ -244,7 +292,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
             StringBuilder stringBuilder = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
             stringBuilder.append("?key=" + APIKEY);
             stringBuilder.append("&location=" + userLatitude + "," + userLongitude);
-            stringBuilder.append("&radius=10000");
+            stringBuilder.append("&type=food");
             stringBuilder.append("&input=" + URLEncoder.encode(input, "utf8"));
 
             URL url = new URL(stringBuilder.toString());
@@ -286,8 +334,117 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onEventSuggestionsClicked(View view, int position) {
+    public void onClick(View view) {
+        if (view.getId() == R.id.bEditEventDone) {
 
+            if (isPlaceDetailsTaskRunning) {
+                isDoneClicked = true;
+            } else {
+                isDoneClicked = false;
+                sendEditEventRequest();
+            }
+
+        }
+
+        if (view.getId() == R.id.bEditEventCancel) {
+
+            if (fragmentManager == null) {
+                fragmentManager = getActivity().getSupportFragmentManager();
+            }
+
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            EventDetailsFragment eventDetailsFragment = new EventDetailsFragment();
+            eventDetailsFragment.setEvent(oldEvent);
+            fragmentTransaction.replace(R.id.flMainActivity, eventDetailsFragment, "Event Details");
+            fragmentTransaction.commit();
+
+        }
+
+        if (view.getId() == R.id.llEditEventSelectTimeWithClock) {
+
+            if (fragmentManager == null) {
+                fragmentManager = getActivity().getSupportFragmentManager();
+            }
+
+            selectTimeDialogFragment.show(fragmentManager, "Select time");
+
+        }
+
+    }
+
+
+    @Override
+    public void setTime(DateTime startDateTime, DateTime endDateTime) {
+
+        if (startDateTime == null || endDateTime == null) {
+            return;
+        } else {
+
+            this.startDateTime = startDateTime;
+            this.endDateTime = endDateTime;
+
+            startDateTimeTextView.setText(startDateTime.toString(timeFormatter) + ", " + startDateTime.toString(dateFormatter));
+            endDateTimeTextView.setText(endDateTime.toString(timeFormatter) + ", " + endDateTime.toString(dateFormatter));
+
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        placeId = (String) resultListPlaceId.get(position);
+        String url = PLACE_DETAILS_URL + "placeid=" + placeId + "&key=" + APIKEY;
+
+        googlePlaceDetailsTask = new GooglePlaceDetailsTask(url);
+        isPlaceDetailsTaskRunning = true;
+        googlePlaceDetailsTask.execute();
+
+    }
+
+    private void sendEditEventRequest() {
+
+        if ((eventTitle.getText().toString() == null) || eventTitle.getText().toString().isEmpty()) {
+            Toast.makeText(getActivity(), "Title can't be null", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (startDateTimeTextView.getText().toString() == null || startDateTimeTextView.getText().toString().isEmpty() || endDateTimeTextView.getText().toString() == null || endDateTimeTextView.getText().toString().isEmpty()) {
+            Toast.makeText(getActivity(), "Timings can't be null", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (latitude == null || latitude.isEmpty() || longitude == null || longitude.isEmpty()) {
+
+            locationZone = userZone;
+            latitude = null;
+            longitude = null;
+            locationName = null;
+        } else {
+
+            LocationService locationService = new LocationService(getActivity());
+            locationZone = locationService.getZoneFromLocation(Double.parseDouble(latitude), Double.parseDouble(longitude));
+        }
+
+        Map<String, String> postdata = new HashMap<>();
+        postdata.put("type", String.valueOf(eventType));
+        postdata.put("event_id", String.valueOf(oldEvent.getId()));
+        postdata.put("description", description.getText().toString());
+        postdata.put("location_latitude", latitude);
+        postdata.put("location_longitude", longitude);
+        postdata.put("location_name", locationName);
+        postdata.put("location_zone", locationZone);
+        postdata.put("start_time", startDateTime.toString());
+        postdata.put("end_time", endDateTime.toString());
+        postdata.put("is_finalised", String.valueOf(isEventFinalised));
+
+        editEventApiTask = new EditEventApiTask(getActivity(), postdata);
+        editEventApiTask.execute();
+
+
+    }
+
+
+    @Override
+    public void onEventSuggestionsClicked(View view, int position) {
         autoCompleteTextView.setText(suggestionList.get(position).getName());
 
         locationName = suggestionList.get(position).getName();
@@ -296,18 +453,50 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onEventCategoryTypeChanged(Event.Type eventType, EventCategory eventCategory) {
+    public boolean onMenuItemClick(MenuItem item) {
+        if (item.getItemId() == R.id.abbFinaliseEvent) {
 
-        this.eventType = eventType;
-        this.eventCategory = eventCategory;
+            if(isEventFinalised){
+                isEventFinalised = false;
+                Toast.makeText(getActivity(), "The event is now not finalised", Toast.LENGTH_LONG).show();
+            }else {
+                isEventFinalised = true;
+                Toast.makeText(getActivity(), "The event is now finalised", Toast.LENGTH_LONG).show();
+            }
+        }
 
-        Map<String, String> postdata = new HashMap<>();
-        postdata.put("category", String.valueOf(this.eventCategory));
-        postdata.put("latitude", userLatitude);
-        postdata.put("longitude", userLongitude);
+        if (item.getItemId() == R.id.abbDeleteEvent) {
 
-        eventSuggestionsApiTask = new EventSuggestionsApiTask(getActivity(), postdata);
-        eventSuggestionsApiTask.execute();
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Delete Event")
+                    .setMessage("Are you sure you want to delete this event?")
+                    .setCancelable(true)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+
+                            eventDeleteApiThread = new EventDeleteApiThread(getActivity(), oldEvent.getId());
+                            eventDeleteApiThread.start();
+
+                            if (fragmentManager == null) {
+                                fragmentManager = getActivity().getSupportFragmentManager();
+                            }
+
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.replace(R.id.flMainActivity, new HomeFragment(), "Home");
+                            fragmentTransaction.commit();
+
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+        return false;
     }
 
     class GooglePlacesAutocompleteAdapter extends ArrayAdapter implements Filterable {
@@ -357,178 +546,6 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
     }
 
-
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.bCreateEventCreate) {
-
-            if (isPlaceDetailsTaskRunning) {
-                isCreateEventButtonClicked = true;
-            } else {
-                isCreateEventButtonClicked = false;
-                sendCreateEventRequest();
-            }
-
-        }
-
-        if (view.getId() == R.id.llCreateEventSelectTime) {
-
-            if (fragmentManager == null) {
-                fragmentManager = getActivity().getSupportFragmentManager();
-            }
-
-            selectTimeDialogFragment.show(fragmentManager, "Select time");
-
-        }
-
-        if (view.getId() == R.id.llCreateEventSelectTimeWithClock) {
-
-            if (fragmentManager == null) {
-                fragmentManager = getActivity().getSupportFragmentManager();
-            }
-
-            selectTimeDialogFragment.show(fragmentManager, "Select time");
-
-        }
-
-        if(view.getId() == R.id.ivCreateEventIcon){
-
-            if(eventSuggestionsApiTask != null){
-                eventSuggestionsApiTask.cancel(true);
-            }
-
-            ChangeEventCategoryTypeDialogFragment changeEventCategoryTypeDialogFragment = new ChangeEventCategoryTypeDialogFragment();
-            changeEventCategoryTypeDialogFragment.setEventCategoryTypeCommunicator(this);
-            changeEventCategoryTypeDialogFragment.setOldCategoryType(eventType, eventCategory);
-
-
-            if(fragmentManager == null){
-                fragmentManager = getActivity().getSupportFragmentManager();
-            }
-            changeEventCategoryTypeDialogFragment.show(fragmentManager,"Change Category Type");
-        }
-    }
-
-    public void setInfo(Event.Type eventType, EventCategory eventCategory) {
-        this.eventCategory = eventCategory;
-        this.eventType = eventType;
-    }
-
-    @Override
-    public void setTime(DateTime startDateTime, DateTime endDateTime) {
-
-        if (startDateTime == null || endDateTime == null) {
-            return;
-        } else {
-
-            this.startDateTime = startDateTime;
-            this.endDateTime = endDateTime;
-
-            timings.setVisibility(View.GONE);
-            timingsWithClock.setVisibility(View.VISIBLE);
-
-            DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("MMM dd");
-            DateTimeFormatter timeFormatter = DateTimeFormat.forPattern("HH:mm");
-
-            startDateTimeTextView.setText(startDateTime.toString(timeFormatter) + ", " + startDateTime.toString(dateFormatter));
-            endDateTimeTextView.setText(endDateTime.toString(timeFormatter) + ", " + endDateTime.toString(dateFormatter));
-
-        }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        placeId = (String) resultListPlaceId.get(position);
-        String url = PLACE_DETAILS_URL + "placeid=" + placeId + "&key=" + APIKEY;
-
-        googlePlaceDetailsTask = new GooglePlaceDetailsTask(url);
-        isPlaceDetailsTaskRunning = true;
-        googlePlaceDetailsTask.execute();
-
-    }
-
-    private void sendCreateEventRequest() {
-
-        if ((title.getText().toString() == null) || title.getText().toString().isEmpty()) {
-            Toast.makeText(getActivity(), "Title can't be null", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        if (startDateTimeTextView.getText().toString() == null || startDateTimeTextView.getText().toString().isEmpty() || endDateTimeTextView.getText().toString() == null || endDateTimeTextView.getText().toString().isEmpty()) {
-            Toast.makeText(getActivity(), "Timings can't be null", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        if (latitude == null || latitude.isEmpty() || longitude == null || longitude.isEmpty()) {
-
-            locationZone = userZone;
-            latitude = null;
-            longitude = null;
-            locationName = null;
-        } else {
-
-            LocationService locationService = new LocationService(getActivity());
-
-            try {
-                locationZone = locationService.getZoneFromLocation(Double.parseDouble(latitude), Double.parseDouble(longitude));
-            }catch(Exception e){
-                locationZone = userZone;
-            }
-        }
-
-        Map<String, String> postdata = new HashMap<>();
-        postdata.put("type", String.valueOf(eventType));
-        postdata.put("category", String.valueOf(eventCategory));
-        postdata.put("title", title.getText().toString());
-        postdata.put("description", description.getText().toString());
-        postdata.put("location_latitude", latitude);
-        postdata.put("location_longitude", longitude);
-        postdata.put("location_name", locationName);
-        postdata.put("location_zone", locationZone);
-        postdata.put("start_time", startDateTime.toString());
-        postdata.put("end_time", endDateTime.toString());
-
-        createEventApiTask = new CreateEventApiTask(getActivity(), postdata);
-        createEventApiTask.execute();
-
-
-    }
-
-    private class CreateEventApiTask extends EventCreateApi {
-        public CreateEventApiTask(Context context, Map<String, String> postData) {
-            super(context, postData);
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-
-            String eventId;
-            try {
-                eventId = (String) o;
-
-                if (eventId == null || eventId.isEmpty()) {
-                    Toast.makeText(getActivity(), "Event could not be created", Toast.LENGTH_LONG).show();
-                } else {
-
-                    if (fragmentManager == null) {
-                        fragmentManager = getActivity().getSupportFragmentManager();
-                    }
-
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    InviteUsersFragment inviteUsersFragment = new InviteUsersFragment();
-                    inviteUsersFragment.setEventId(eventId);
-                    inviteUsersFragment.setInvitees(new ArrayList<EventDetails.Invitee>());
-                    fragmentTransaction.replace(R.id.flMainActivity, inviteUsersFragment, "Invite Users");
-                    fragmentTransaction.commit();
-                }
-
-            } catch (Exception e) {
-                Toast.makeText(getActivity(), "Event could not be created", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
     private class EventSuggestionsApiTask extends EventSuggestionsApi {
 
         public EventSuggestionsApiTask(Context context, Map<String, String> postData) {
@@ -571,8 +588,8 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
                 String status = BasicJsonParser.getValue(jsonResponse, "status");
 
-                if(status.equalsIgnoreCase("OK")){
-                    return  jsonResponse;
+                if (status.equalsIgnoreCase("OK")) {
+                    return jsonResponse;
                 }
 
             } catch (Exception e) {
@@ -584,12 +601,12 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         @Override
         protected void onPostExecute(String s) {
 
-            if(s == null){
+            if (s == null) {
                 locationName = null;
                 latitude = null;
                 longitude = null;
                 locationZone = null;
-            }else{
+            } else {
 
                 try {
                     String result = BasicJsonParser.getValue(s, "result");
@@ -599,7 +616,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
                     String location = BasicJsonParser.getValue(BasicJsonParser.getValue(result, "geometry"), "location");
                     latitude = BasicJsonParser.getValue(location, "lat");
                     longitude = BasicJsonParser.getValue(location, "lng");
-                }catch(Exception e){
+                } catch (Exception e) {
                     locationName = null;
                     latitude = null;
                     longitude = null;
@@ -609,9 +626,50 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
 
             isPlaceDetailsTaskRunning = false;
 
-            if(isCreateEventButtonClicked){
-                sendCreateEventRequest();
+            if (isDoneClicked) {
+                sendEditEventRequest();
             }
+        }
+    }
+
+    private class EditEventApiTask extends EventEditApi {
+        public EditEventApiTask(Context context, Map<String, String> postData) {
+            super(context, postData);
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+
+            Event event;
+            try {
+                event = (Event) o;
+
+                if (event == null) {
+                    Toast.makeText(getActivity(), "Event could not be edited", Toast.LENGTH_LONG).show();
+                } else {
+
+                    if (fragmentManager == null) {
+                        fragmentManager = getActivity().getSupportFragmentManager();
+                    }
+
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    EventDetailsFragment eventDetailsFragment = new EventDetailsFragment();
+                    eventDetailsFragment.setEvent(event);
+                    fragmentTransaction.replace(R.id.flMainActivity, eventDetailsFragment, "Details Event");
+                    fragmentTransaction.commit();
+                }
+
+            } catch (Exception e) {
+                Toast.makeText(getActivity(), "Event could not be created", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private class EventDeleteApiThread extends EventDeleteApi {
+
+        public EventDeleteApiThread(Context context, String eventId) {
+            super(context, eventId);
         }
     }
 }

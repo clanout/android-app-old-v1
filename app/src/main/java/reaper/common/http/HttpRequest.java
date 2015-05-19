@@ -100,6 +100,66 @@ public class HttpRequest
         return null;
     }
 
+    public String sendGetRequest(String url) throws HttpServerError
+    {
+        // URL
+        URL urlObject = null;
+
+        HttpURLConnection connection = null;
+        try
+        {
+            urlObject = new URL(url);
+
+            // Open Http Connection
+            connection = (HttpURLConnection) urlObject.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Connection", "Keep-Alive");
+            connection.setConnectTimeout(Constants.Http.CONNECTION_TIMEOUT);
+            connection.setReadTimeout(Constants.Http.READ_TIMEOUT);
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK)
+            {
+                // Process Response
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line = "";
+                StringBuilder result = new StringBuilder();
+                while ((line = in.readLine()) != null)
+                {
+                    result.append(line);
+                }
+
+                return result.toString();
+            }
+            else
+            {
+                throw new HttpServerError();
+            }
+        }
+        catch (MalformedURLException e)
+        {
+            e.printStackTrace();
+        }
+        catch (ProtocolException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            if (connection != null)
+            {
+                connection.disconnect();
+            }
+        }
+        return null;
+    }
+
+
     private String processPostData(Map<String, String> postData)
     {
         if (postData.size() == 0)

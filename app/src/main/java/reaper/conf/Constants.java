@@ -18,6 +18,7 @@ public class Constants
     public static class AppPreferenceKeys
     {
         public static final String SESSION_ID = "_SESSIONID";
+        public static final String ME = "_ME";
     }
 
     public static class Location

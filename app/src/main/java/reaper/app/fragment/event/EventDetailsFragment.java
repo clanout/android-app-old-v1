@@ -1,10 +1,14 @@
 package reaper.app.fragment.event;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
@@ -19,8 +23,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -34,6 +36,7 @@ import reaper.api.model.event.Event;
 import reaper.api.model.event.EventDetails;
 import reaper.app.activity.MainActivity;
 import reaper.app.list.event.EventDetailsAdapter;
+import reaper.app.service.EventUtils;
 
 /**
  * Created by Aditya on 06-04-2015.
@@ -53,8 +56,7 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
     private RecyclerView recyclerView;
 
     private EventDetailsAdapter eventDetailsAdapter;
-
-    List<EventDetails.Attendee> attendeeList = new ArrayList<>();
+    private FragmentManager fragmentManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -82,6 +84,8 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
         mainContent.setVisibility(View.VISIBLE);
         noUsersMessage.setVisibility(View.GONE);
 
+        eventDetails = null;
+
         invite.setText("Invite People");
         chat.setText("Chat");
 
@@ -102,9 +106,6 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
         chat.setOnClickListener(this);
         location.setOnClickListener(this);
 
-        apiTask = new ApiTask(getActivity(), event.getId());
-        apiTask.execute();
-
         eventIcon.setImageResource(R.drawable.ic_local_bar_black_48dp);
         title.setText(event.getTitle());
         location.setText(event.getLocation().getName());
@@ -117,11 +118,13 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
         startDateTime.setText(start.toString(timeFormatter) + ", " + start.toString(dateFormatter));
         endDateTime.setText(end.toString(timeFormatter) + ", " + end.toString(dateFormatter));
 
+        fragmentManager = getActivity().getSupportFragmentManager();
+
         initRecyclerView();
     }
 
     private void initRecyclerView() {
-        eventDetailsAdapter = new EventDetailsAdapter(getActivity(), attendeeList);
+        eventDetailsAdapter = new EventDetailsAdapter(getActivity(), new ArrayList<EventDetails.Attendee>());
         eventDetailsAdapter.setClickListener(this);
         recyclerView.setAdapter(eventDetailsAdapter);
 
@@ -162,12 +165,17 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
     public void onResume() {
         super.onResume();
 
+        apiTask = new ApiTask(getActivity(), event.getId());
+        apiTask.execute();
+
         if (((MainActivity) getActivity()).getMenu() != null) {
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbAccounts).setVisible(false);
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbCreateEvent).setVisible(false);
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbHome).setVisible(false);
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbSearch).setVisible(false);
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbEditEvent).setVisible(true);
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.abbDeleteEvent).setVisible(false);
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.abbFinaliseEvent).setVisible(false);
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbEditEvent).setOnMenuItemClickListener(this);
         }
 
@@ -182,7 +190,9 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.tvEventDetailsLocation) {
-            Toast.makeText(getActivity(), "Location was clicked", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                    Uri.parse("http://maps.google.com/maps?daddr=" + event.getLocation().getY() + "," + event.getLocation().getX()));
+            startActivity(intent);
         }
 
         if (view.getId() == R.id.bEventDetailsRsvp) {
@@ -210,6 +220,25 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
             filterMenu.show();
         }
 
+        if (view.getId() == R.id.bEventDetailsChat) {
+
+            if (EventUtils.canViewChat(event)) {
+
+            } else {
+                Toast.makeText(getActivity(), "Only people who are going/maybe to the event can view chat", Toast.LENGTH_LONG).show();
+            }
+
+        }
+
+        if (view.getId() == R.id.bEventDetailsInvite) {
+
+            if (EventUtils.canInviteFriends(event)) {
+
+            } else {
+                Toast.makeText(getActivity(), "Only people who are going to the event can invite friends", Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 
     @Override
@@ -219,10 +248,36 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        if (event.getRsvp() == Event.RSVP.YES) {
 
+
+        if (EventUtils.canEdit(event)) {
+
+            if (eventDetails == null) {
+                Toast.makeText(getActivity(), "Fetching data. Please try again in a minute", Toast.LENGTH_LONG).show();
+            } else {
+
+                if (fragmentManager == null) {
+                    fragmentManager = getActivity().getSupportFragmentManager();
+                }
+
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                EditEventFragment editEventFragment = new EditEventFragment();
+                editEventFragment.setOldEvent(event, eventDetails);
+                fragmentTransaction.replace(R.id.flMainActivity, editEventFragment, "Edit Event");
+                fragmentTransaction.commit();
+            }
         } else {
-            Toast.makeText(getActivity(), "Only people who are going to the event can edit it", Toast.LENGTH_LONG).show();
+
+            if (event.getRsvp() != Event.RSVP.YES) {
+                Toast.makeText(getActivity(), "Only people who are going to the event can edit it", Toast.LENGTH_LONG).show();
+            }
+
+            if (event.getRsvp() == Event.RSVP.YES) {
+
+                if (event.isFinalized()) {
+                    Toast.makeText(getActivity(), "The event is finalised", Toast.LENGTH_LONG).show();
+                }
+            }
         }
         return false;
     }
@@ -240,11 +295,7 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
                 eventDetails = (EventDetails) o;
                 description.setText(eventDetails.getDescription());
 
-                for (EventDetails.Attendee attendee : eventDetails.getAttendees()) {
-                    attendeeList.add(attendee);
-                }
-
-                refreshRecyclerView(attendeeList);
+                refreshRecyclerView(eventDetails.getAttendees());
 
             } catch (Exception e) {
 
