@@ -35,6 +35,7 @@ import reaper.api.endpoints.event.EventDetailsApi;
 import reaper.api.model.event.Event;
 import reaper.api.model.event.EventDetails;
 import reaper.app.activity.MainActivity;
+import reaper.app.fragment.chat.ChatFragment;
 import reaper.app.list.event.EventDetailsAdapter;
 import reaper.app.service.EventUtils;
 
@@ -227,6 +228,14 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
             } else {
                 Toast.makeText(getActivity(), "Only people who are going/maybe to the event can view chat", Toast.LENGTH_LONG).show();
             }
+
+            if(fragmentManager == null){
+                fragmentManager = getActivity().getSupportFragmentManager();
+            }
+
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.flMainActivity, new ChatFragment(), "Chat");
+            fragmentTransaction.commit();
 
         }
 

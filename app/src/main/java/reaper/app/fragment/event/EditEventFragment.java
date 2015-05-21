@@ -162,7 +162,7 @@ public class EditEventFragment extends Fragment implements AdapterView.OnItemCli
 
         try {
             eventCategory = EventCategory.valueOf(oldEvent.getCategory());
-        }catch(Exception e){
+        } catch (Exception e) {
             eventCategory = EventCategory.GENERAL;
         }
 
@@ -425,16 +425,25 @@ public class EditEventFragment extends Fragment implements AdapterView.OnItemCli
         }
 
         Map<String, String> postdata = new HashMap<>();
-        postdata.put("type", String.valueOf(eventType));
         postdata.put("event_id", String.valueOf(oldEvent.getId()));
-        postdata.put("description", description.getText().toString());
-        postdata.put("location_latitude", latitude);
-        postdata.put("location_longitude", longitude);
-        postdata.put("location_name", locationName);
-        postdata.put("location_zone", locationZone);
-        postdata.put("start_time", startDateTime.toString());
-        postdata.put("end_time", endDateTime.toString());
-        postdata.put("is_finalised", String.valueOf(isEventFinalised));
+
+            postdata.put("description", description.getText().toString());
+
+        if (!String.valueOf(oldEvent.getLocation().getY()).equals(latitude) || !String.valueOf(oldEvent.getLocation().getX()).equals(longitude)) {
+            postdata.put("location_latitude", latitude);
+            postdata.put("location_longitude", longitude);
+            postdata.put("location_name", locationName);
+            postdata.put("location_zone", locationZone);
+        }
+
+        if (startDateTime != oldEvent.getStartTime() || endDateTime != oldEvent.getEndTime()) {
+            postdata.put("start_time", startDateTime.toString());
+            postdata.put("end_time", endDateTime.toString());
+        }
+
+        if (oldEvent.isFinalized() != isEventFinalised) {
+            postdata.put("is_finalised", String.valueOf(isEventFinalised));
+        }
 
         editEventApiTask = new EditEventApiTask(getActivity(), postdata);
         editEventApiTask.execute();
@@ -456,10 +465,10 @@ public class EditEventFragment extends Fragment implements AdapterView.OnItemCli
     public boolean onMenuItemClick(MenuItem item) {
         if (item.getItemId() == R.id.abbFinaliseEvent) {
 
-            if(isEventFinalised){
+            if (isEventFinalised) {
                 isEventFinalised = false;
                 Toast.makeText(getActivity(), "The event is now not finalised", Toast.LENGTH_LONG).show();
-            }else {
+            } else {
                 isEventFinalised = true;
                 Toast.makeText(getActivity(), "The event is now finalised", Toast.LENGTH_LONG).show();
             }
