@@ -63,6 +63,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbSearch).setVisible(false);
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbFinaliseEvent).setVisible(false);
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbDeleteEvent).setVisible(false);
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.abbAddPhone).setVisible(false);
         }
     }
 
@@ -91,6 +92,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         msg.setMe(false);
         msg.setMessage("Hi");
         msg.setSenderName("Aditya");
+        msg.setSenderId("1");
         chatMessageList.add(msg);
 
         ChatMessage msg1 = new ChatMessage();
@@ -98,6 +100,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         msg1.setMe(false);
         msg1.setMessage("How r u doing???");
         msg1.setSenderName("Aditya");
+        msg1.setSenderId("1");
         chatMessageList.add(msg1);
 
         chatAdapter = new ChatAdapter(new ArrayList<ChatMessage>(), getActivity());
@@ -124,6 +127,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             chatMessage.setMessage(message);
             chatMessage.setSenderName("Harsh");
             chatMessage.setMe(true);
+            chatMessage.setSenderId("2");
 
             typeMessage.setText("");
             displayMessage(chatMessage);

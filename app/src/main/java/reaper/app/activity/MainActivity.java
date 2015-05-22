@@ -1,6 +1,8 @@
 package reaper.app.activity;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -10,19 +12,28 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 import java.util.List;
 
 import reaper.R;
+import reaper.api.endpoints.accounts.AddPhoneApi;
 import reaper.api.model.event.Event;
 import reaper.app.backgroundservice.EventFeedListener;
 import reaper.app.backgroundservice.EventFeedService;
 import reaper.app.fragment.accounts.AccountsFragment;
 import reaper.app.fragment.event.dialogfragment.CreateEventDialogFragment;
 import reaper.app.fragment.home.HomeFragment;
+import reaper.app.service.PhoneUtils;
 import reaper.common.cache.Cache;
 import reaper.conf.AppPreferences;
 import reaper.conf.Constants;
@@ -118,6 +129,12 @@ public class MainActivity extends FragmentActivity implements EventFeedListener 
         menu.findItem(R.id.abbSearch).setVisible(false);
         menu.findItem(R.id.abbDeleteEvent).setVisible(false);
         menu.findItem(R.id.abbFinaliseEvent).setVisible(false);
+
+        if (AppPreferences.get(this, Constants.AppPreferenceKeys.MY_PHONE_NUMBER) == null) {
+            menu.findItem(R.id.abbAddPhone).setVisible(true);
+        } else {
+            menu.findItem(R.id.abbAddPhone).setVisible(false);
+        }
         return true;
     }
 
@@ -149,6 +166,44 @@ public class MainActivity extends FragmentActivity implements EventFeedListener 
             }
             DialogFragment createEventDialog = new CreateEventDialogFragment();
             createEventDialog.show(fragmentManager, "Create Event Dialog");
+
+        }
+
+        if (item.getItemId() == R.id.abbAddPhone) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCancelable(true);
+            builder.setTitle("Add Phone Number");
+
+            LayoutInflater inflater = this.getLayoutInflater();
+            final View dialogView = inflater.inflate(R.layout.dialog_add_phone, null);
+            builder.setView(dialogView);
+
+            final EditText phoneNumber = (EditText) dialogView.findViewById(R.id.etAddPhone);
+            Button add = (Button) dialogView.findViewById(R.id.bAddPhone);
+
+            final AlertDialog alertDialog = builder.create();
+
+            add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    String parsedPhone = PhoneUtils.parsePhone(phoneNumber.getText().toString(), Constants.DEFAULT_COUNTRY_CODE);
+                    if (parsedPhone == null) {
+                        Toast.makeText(MainActivity.this, "Please enter a valid phone number", Toast.LENGTH_LONG).show();
+                    } else {
+
+                        AddPhoneApi addPhoneApi = new AddPhoneApi(MainActivity.this, parsedPhone);
+                        addPhoneApi.start();
+
+                        AppPreferences.set(MainActivity.this, Constants.AppPreferenceKeys.MY_PHONE_NUMBER, parsedPhone);
+                        getMenu().findItem(R.id.abbAddPhone).setVisible(false);
+                        alertDialog.cancel();
+                    }
+                }
+            });
+
+            alertDialog.show();
 
         }
         return super.onOptionsItemSelected(item);

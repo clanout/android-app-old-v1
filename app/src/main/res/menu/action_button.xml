@@ -58,4 +58,13 @@
         android:orderInCategory="3"
         android:actionViewClass="android.widget.SearchView"
         tools:ignore="AppCompatResource" />
+
+    <item
+        android:id="@+id/abbAddPhone"
+        android:icon="@drawable/ic_action_phone"
+        android:showAsAction="always"
+        android:title= "Add Phone Number"
+        android:orderInCategory="8"
+        tools:ignore="AppCompatResource" />
+
 </menu>

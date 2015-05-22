@@ -22,4 +22,7 @@ public class HandlerMessageStatusCode
 
     public static final int EVENT_INVITE_SUCCESS = 11;
     public static final int EVENT_INVITE_FAILURE = 12;
+
+    public static final int ADD_PHONE_FAILURE = 13;
+    public static final int ADD_PHONE_SUCCESS = 14;
 }

@@ -19,6 +19,7 @@ public class Constants
     {
         public static final String SESSION_ID = "_SESSIONID";
         public static final String ME = "_ME";
+        public static final String MY_PHONE_NUMBER = "_MY_PHONE_NUMBER";
     }
 
     public static class Location
@@ -39,4 +40,6 @@ public class Constants
         public static final int CONNECTION_TIMEOUT = 3000;
         public static final int READ_TIMEOUT = 10000;
     }
+
+    public static final String DEFAULT_COUNTRY_CODE = "91";
 }

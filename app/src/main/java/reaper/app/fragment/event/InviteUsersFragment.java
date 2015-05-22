@@ -79,6 +79,7 @@ public class InviteUsersFragment extends Fragment implements View.OnClickListene
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbSearch).setVisible(false);
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbFinaliseEvent).setVisible(false);
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbDeleteEvent).setVisible(false);
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.abbAddPhone).setVisible(false);
         }
     }
 

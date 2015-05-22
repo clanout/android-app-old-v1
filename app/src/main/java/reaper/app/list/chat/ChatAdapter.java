@@ -1,6 +1,7 @@
 package reaper.app.list.chat;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,7 +55,13 @@ public class ChatAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ChatViewHolder chatViewHolder = new ChatViewHolder();
-        ChatMessage chatMessage = chatMessageList.get(position);
+        ChatMessage chatMessageCurrent = chatMessageList.get(position);
+        ChatMessage chatMessagePrevious = null;
+
+        if (position != 0) {
+            chatMessagePrevious = chatMessageList.get(position - 1);
+        }
+
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null) {
@@ -64,40 +71,34 @@ public class ChatAdapter extends BaseAdapter {
         } else {
             chatViewHolder = (ChatViewHolder) convertView.getTag();
         }
-
-        boolean isMe = chatMessage.isMe();
+        boolean isMe = chatMessageCurrent.isMe();
         setAlignment(chatViewHolder, isMe);
 
-        chatViewHolder.messageInside.setText(chatMessage.getMessage());
-        chatViewHolder.infoOutside.setText(chatMessage.getSenderName());
+        if (chatMessagePrevious == null) {
+            chatViewHolder.infoOutside.setVisibility(View.VISIBLE);
+            chatViewHolder.messageInside.setText(chatMessageCurrent.getMessage());
 
+            if (!chatMessageCurrent.isMe()) {
+                chatViewHolder.infoOutside.setText(chatMessageCurrent.getSenderName());
+            }
+        } else {
+            if (chatMessageCurrent.getSenderId().equals(chatMessagePrevious.getSenderId())) {
+                chatViewHolder.infoOutside.setVisibility(View.GONE);
+                chatViewHolder.messageInside.setText(chatMessageCurrent.getMessage());
+            } else {
+                chatViewHolder.infoOutside.setVisibility(View.VISIBLE);
+                chatViewHolder.messageInside.setText(chatMessageCurrent.getMessage());
+
+                if (!chatMessageCurrent.isMe()) {
+                    chatViewHolder.infoOutside.setText(chatMessageCurrent.getSenderName());
+                }
+            }
+        }
         return convertView;
     }
 
     private void setAlignment(ChatViewHolder chatViewHolder, boolean isMe) {
         if (!isMe) {
-            chatViewHolder.contentWithBackground.setBackgroundResource(R.drawable.in_message_bg);
-
-            LinearLayout.LayoutParams layoutParams =
-                    (LinearLayout.LayoutParams) chatViewHolder.contentWithBackground.getLayoutParams();
-            layoutParams.gravity = Gravity.RIGHT;
-            chatViewHolder.contentWithBackground.setLayoutParams(layoutParams);
-
-            RelativeLayout.LayoutParams lp =
-                    (RelativeLayout.LayoutParams) chatViewHolder.content.getLayoutParams();
-            lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
-            lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            chatViewHolder.content.setLayoutParams(lp);
-
-            layoutParams = (LinearLayout.LayoutParams) chatViewHolder.messageInside.getLayoutParams();
-            layoutParams.gravity = Gravity.RIGHT;
-            chatViewHolder.messageInside.setLayoutParams(layoutParams);
-
-            layoutParams = (LinearLayout.LayoutParams) chatViewHolder.infoOutside.getLayoutParams();
-            layoutParams.gravity = Gravity.RIGHT;
-            chatViewHolder.infoOutside.setLayoutParams(layoutParams);
-        } else {
-
             chatViewHolder.contentWithBackground.setBackgroundResource(R.drawable.out_message_bg);
 
             LinearLayout.LayoutParams layoutParams =
@@ -117,6 +118,28 @@ public class ChatAdapter extends BaseAdapter {
 
             layoutParams = (LinearLayout.LayoutParams) chatViewHolder.infoOutside.getLayoutParams();
             layoutParams.gravity = Gravity.LEFT;
+            chatViewHolder.infoOutside.setLayoutParams(layoutParams);
+        } else {
+
+            chatViewHolder.contentWithBackground.setBackgroundResource(R.drawable.in_message_bg);
+
+            LinearLayout.LayoutParams layoutParams =
+                    (LinearLayout.LayoutParams) chatViewHolder.contentWithBackground.getLayoutParams();
+            layoutParams.gravity = Gravity.RIGHT;
+            chatViewHolder.contentWithBackground.setLayoutParams(layoutParams);
+
+            RelativeLayout.LayoutParams lp =
+                    (RelativeLayout.LayoutParams) chatViewHolder.content.getLayoutParams();
+            lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
+            lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            chatViewHolder.content.setLayoutParams(lp);
+
+            layoutParams = (LinearLayout.LayoutParams) chatViewHolder.messageInside.getLayoutParams();
+            layoutParams.gravity = Gravity.RIGHT;
+            chatViewHolder.messageInside.setLayoutParams(layoutParams);
+
+            layoutParams = (LinearLayout.LayoutParams) chatViewHolder.infoOutside.getLayoutParams();
+            layoutParams.gravity = Gravity.RIGHT;
             chatViewHolder.infoOutside.setLayoutParams(layoutParams);
         }
     }

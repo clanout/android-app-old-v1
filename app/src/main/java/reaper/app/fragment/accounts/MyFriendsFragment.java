@@ -132,11 +132,14 @@ public class MyFriendsFragment extends Fragment implements View.OnClickListener,
         apiTask.execute();
 
         if (((MainActivity) getActivity()).getMenu() != null) {
-            ((MainActivity)getActivity()).getMenu().findItem(R.id.abbAccounts).setVisible(false);
-            ((MainActivity)getActivity()).getMenu().findItem(R.id.abbCreateEvent).setVisible(false);
-            ((MainActivity)getActivity()).getMenu().findItem(R.id.abbHome).setVisible(true);
-            ((MainActivity)getActivity()).getMenu().findItem(R.id.abbSearch).setVisible(true);
-            ((MainActivity)getActivity()).getMenu().findItem(R.id.abbEditEvent).setVisible(false);
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.abbAccounts).setVisible(false);
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.abbCreateEvent).setVisible(false);
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.abbHome).setVisible(true);
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.abbEditEvent).setVisible(false);
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.abbSearch).setVisible(true);
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.abbFinaliseEvent).setVisible(false);
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.abbDeleteEvent).setVisible(false);
+            ((MainActivity) getActivity()).getMenu().findItem(R.id.abbAddPhone).setVisible(false);
         }
     }
 

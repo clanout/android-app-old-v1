@@ -11,6 +11,15 @@ public class ChatMessage implements Model {
     private boolean isMe;
     private String message;
     private String senderName;
+    private String senderId;
+
+    public String getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
+    }
 
     public long getId() {
         return id;
