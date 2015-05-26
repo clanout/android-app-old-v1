@@ -4,10 +4,10 @@
 
     <item
         android:id="@+id/abbAccounts"
-        android:icon="@drawable/ic_action_accounts"
+        android:icon="@drawable/ic_action_settings"
         android:showAsAction="always"
         tools:ignore="AppCompatResource"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="Accounts"/>
 
     <item
@@ -15,7 +15,7 @@
         android:icon="@drawable/ic_action_event"
         android:showAsAction="ifRoom"
         android:title="Home"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         tools:ignore="AppCompatResource" />
 
     <item
@@ -23,7 +23,7 @@
         android:icon="@drawable/ic_action_new"
         android:showAsAction="always"
         android:title="Create Event"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         tools:ignore="AppCompatResource" />
 
     <item
@@ -31,7 +31,7 @@
         android:icon="@drawable/ic_action_edit"
         android:showAsAction="always"
         android:title= "Edit Event"
-        android:orderInCategory="5"
+        android:orderInCategory="6"
         tools:ignore="AppCompatResource" />
 
     <item
@@ -39,7 +39,7 @@
         android:icon="@drawable/ic_action_secure"
         android:showAsAction="always"
         android:title= "Finalise Event"
-        android:orderInCategory="6"
+        android:orderInCategory="7"
         tools:ignore="AppCompatResource" />
 
     <item
@@ -47,7 +47,7 @@
         android:icon="@drawable/ic_action_discard"
         android:showAsAction="always"
         android:title= "Delete Event"
-        android:orderInCategory="7"
+        android:orderInCategory="8"
         tools:ignore="AppCompatResource" />
 
     <item
@@ -55,16 +55,16 @@
         android:icon="@drawable/ic_action_search"
         android:showAsAction="always"
         android:title="Search"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:actionViewClass="android.widget.SearchView"
         tools:ignore="AppCompatResource" />
 
     <item
         android:id="@+id/abbAddPhone"
-        android:icon="@drawable/ic_action_phone"
+        android:icon="@drawable/ic_action_error"
         android:showAsAction="always"
         android:title= "Add Phone Number"
-        android:orderInCategory="8"
+        android:orderInCategory="1"
         tools:ignore="AppCompatResource" />
 
 </menu>

@@ -23,6 +23,7 @@ import java.util.List;
 
 import reaper.R;
 import reaper.api.model.event.Event;
+import reaper.api.model.event.EventCategory;
 
 /**
  * Created by reaper on 04-04-2015.
@@ -136,7 +137,13 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
 
         Event currentItem = data.get(position);
-        holder.title.setText(currentItem.getTitle());
+
+        if(currentItem.getTitle().length() <= 25){
+            holder.title.setText(currentItem.getTitle());
+        }else{
+            holder.title.setText(currentItem.getTitle().substring(0,22) + "...");
+        }
+
 
         DateTime dateTime = currentItem.getStartTime();
         DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("MMM dd");
@@ -148,7 +155,11 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         }
         else
         {
-            holder.timeLocation.setText(dateTime.toString(timeFormatter) + ", " + currentItem.getLocation().getName());
+            if(currentItem.getLocation().getName().length() <= 23) {
+                holder.timeLocation.setText(dateTime.toString(timeFormatter) + ", " + currentItem.getLocation().getName());
+            }else{
+                holder.timeLocation.setText(dateTime.toString(timeFormatter) + ", " + currentItem.getLocation().getName().substring(0,22) + "..");
+            }
         }
 
         if (currentItem.getFriendCount() == 0)
@@ -169,7 +180,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         if (currentItem.getRsvp() == Event.RSVP.YES)
         {
             holder.rsvpIcon.setVisibility(View.VISIBLE);
-            holder.rsvpIcon.setImageResource(R.drawable.ic_check_circle_black_24dp);
+            holder.rsvpIcon.setImageResource(R.drawable.ic_check_black_24dp);
         }
         else if (currentItem.getRsvp() == Event.RSVP.MAYBE)
         {
@@ -178,10 +189,45 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         }
         else
         {
-            holder.rsvpIcon.setVisibility(View.INVISIBLE);
+            holder.rsvpIcon.setVisibility(View.VISIBLE);
+            holder.rsvpIcon.setImageResource(R.drawable.ic_close_black_24dp);
         }
 
-        holder.eventIcon.setImageResource(R.drawable.ic_local_bar_black_36dp);
+        if(currentItem.getCategory().equals(String.valueOf(EventCategory.GENERAL))) {
+            holder.eventIcon.setImageResource(R.drawable.ic_event_black_36dp);
+        }
+
+        if(currentItem.getCategory().equals(String.valueOf(EventCategory.EAT_OUT))) {
+            holder.eventIcon.setImageResource(R.drawable.ic_local_restaurant_black_36dp);
+        }
+
+        if(currentItem.getCategory().equals(String.valueOf(EventCategory.DRINKS))) {
+            holder.eventIcon.setImageResource(R.drawable.ic_local_bar_black_36dp);
+        }
+
+        if(currentItem.getCategory().equals(String.valueOf(EventCategory.CAFE))) {
+            holder.eventIcon.setImageResource(R.drawable.ic_local_cafe_black_36dp);
+        }
+
+        if(currentItem.getCategory().equals(String.valueOf(EventCategory.MOVIES))) {
+            holder.eventIcon.setImageResource(R.drawable.ic_local_movies_black_36dp);
+        }
+
+        if(currentItem.getCategory().equals(String.valueOf(EventCategory.OUTDOORS))) {
+            holder.eventIcon.setImageResource(R.drawable.ic_directions_bike_black_36dp);
+        }
+
+        if(currentItem.getCategory().equals(String.valueOf(EventCategory.PARTY))) {
+            holder.eventIcon.setImageResource(R.drawable.ic_location_city_black_36dp);
+        }
+
+        if(currentItem.getCategory().equals(String.valueOf(EventCategory.LOCAL_EVENTS))) {
+            holder.eventIcon.setImageResource(R.drawable.ic_local_attraction_black_36dp);
+        }
+
+        if(currentItem.getCategory().equals(String.valueOf(EventCategory.SHOPPING))) {
+            holder.eventIcon.setImageResource(R.drawable.ic_local_mall_black_36dp);
+        }
 
 
         if (Math.random() < 0.5)
@@ -261,7 +307,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                     if (rsvpClickListener != null)
                     {
                         rsvpIcon.setVisibility(View.VISIBLE);
-                        rsvpIcon.setImageResource(R.drawable.ic_check_circle_black_24dp);
+                        rsvpIcon.setImageResource(R.drawable.ic_check_black_24dp);
                         itemSwipedStates.set(getPosition(), SwipedState.SHOWING_PRIMARY_CONTENT);
                         viewPager.setCurrentItem(itemSwipedStates.get(getPosition()).getPosition());
 
@@ -294,7 +340,8 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                 {
                     if (rsvpClickListener != null)
                     {
-                        rsvpIcon.setVisibility(View.INVISIBLE);
+                        rsvpIcon.setVisibility(View.VISIBLE);
+                        rsvpIcon.setImageResource(R.drawable.ic_close_black_24dp);
                         itemSwipedStates.set(getPosition(), SwipedState.SHOWING_PRIMARY_CONTENT);
                         viewPager.setCurrentItem(itemSwipedStates.get(getPosition()).getPosition());
 

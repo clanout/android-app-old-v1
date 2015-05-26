@@ -122,6 +122,43 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
         fragmentManager = getActivity().getSupportFragmentManager();
 
         initRecyclerView();
+
+        EventDetails eventDetails1 = new EventDetails();
+        eventDetails1.setDescription("Please be there by 6pm. Pets not allowed. This is a bring your own booze party.");
+
+        List<EventDetails.Attendee> attendees = new ArrayList<>();
+        EventDetails.Attendee attendee1 = new EventDetails.Attendee();
+        EventDetails.Attendee attendee2 = new EventDetails.Attendee();
+        EventDetails.Attendee attendee3 = new EventDetails.Attendee();
+
+        attendee1.setName("Harsh Pokharna");
+        attendee2.setName("Aditya Prasad");
+        attendee3.setName("Gaurav Kunwar");
+
+        attendee1.setFriend(true);
+        attendee2.setFriend(false);
+        attendee3.setFriend(true);
+
+        attendee1.setId("1");
+        attendee2.setId("2");
+        attendee3.setId("3");
+
+        attendee1.setInviter(true);
+        attendee2.setInviter(true);
+        attendee3.setInviter(false);
+
+        attendee1.setRsvp(Event.RSVP.MAYBE);
+        attendee2.setRsvp(Event.RSVP.MAYBE);
+        attendee3.setRsvp(Event.RSVP.YES);
+
+        attendees.add(attendee1);
+        attendees.add(attendee2);
+        attendees.add(attendee3);
+
+        eventDetails1.setAttendees(attendees);
+        description.setText(eventDetails1.getDescription());
+        refreshRecyclerView(eventDetails1.getAttendees());
+
     }
 
     private void initRecyclerView() {
@@ -166,8 +203,8 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
     public void onResume() {
         super.onResume();
 
-        apiTask = new ApiTask(getActivity(), event.getId());
-        apiTask.execute();
+//        apiTask = new ApiTask(getActivity(), event.getId());
+//        apiTask.execute();
 
         if (((MainActivity) getActivity()).getMenu() != null) {
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbAccounts).setVisible(false);
@@ -303,6 +340,7 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
 
             try {
                 eventDetails = (EventDetails) o;
+
                 description.setText(eventDetails.getDescription());
 
                 refreshRecyclerView(eventDetails.getAttendees());

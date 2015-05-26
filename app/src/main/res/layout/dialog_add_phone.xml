@@ -7,15 +7,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvAddPhoneMessage"
-        android:layout_margin="15dp"
+        android:layout_marginLeft ="15dp"
+        android:layout_marginRight ="15dp"
+        android:layout_marginTop="10dp"
         android:textStyle="italic"
-        android:text="Adding a phone number helps people who are not your facebook friends to invite you"/>
+        android:text="By adding your phone number, you can invite your phone contacts and receive invitations from people who have your phone number"
+        android:gravity="center_horizontal" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:hint="Enter 10 digit Phone Number"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:hint="Enter your 10 digit Phone Number"
+        android:textSize="14sp"
         android:id="@+id/etAddPhone"/>
 
     <Button
@@ -24,6 +31,6 @@
         android:layout_marginRight="15dp"
         android:layout_marginLeft="15dp"
         android:id="@+id/bAddPhone"
-        android:text="Let other people find me"/>
+        android:text="DONE"/>
     
 </LinearLayout>

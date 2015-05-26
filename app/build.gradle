@@ -63,4 +63,8 @@ dependencies {
     compile 'joda-time:joda-time:2.7'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.6.2'
     compile 'com.googlecode.libphonenumber:libphonenumber:7.0.2'
+    compile 'com.google.android.gms:play-services:7.0.0'
+    compile 'com.githang:com-phillipcalvin-iconbutton:1.0.1@aar'
+    compile 'com.github.fengdai:alertdialogpro-theme-material:0.2.3'
+    compile 'com.afollestad:material-dialogs:0.7.4.2'
 }

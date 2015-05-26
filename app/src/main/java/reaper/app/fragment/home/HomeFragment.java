@@ -18,6 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.phillipcalvin.iconbutton.IconButton;
+
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,7 +53,7 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
     private TextView noEventsMessage;
     private RecyclerView recyclerView;
     private EventListAdapter eventListAdapter;
-    private Button filter, sort;
+    private IconButton filter, sort;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -57,8 +61,8 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
         recyclerView = (RecyclerView) view.findViewById(R.id.rvEventsList);
         mainContent = (LinearLayout) view.findViewById(R.id.llHomefragmentMainContent);
         noEventsMessage = (TextView) view.findViewById(R.id.tvHomeFragmentNoEvents);
-        filter = (Button) view.findViewById(R.id.bHomeFragmentFilter);
-        sort = (Button) view.findViewById(R.id.bHomeFragmentSort);
+        filter = (IconButton) view.findViewById(R.id.bHomeFragmentFilter);
+        sort = (IconButton) view.findViewById(R.id.bHomeFragmentSort);
 
         sort.setOnClickListener(this);
         filter.setOnClickListener(this);
@@ -185,7 +189,7 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
                         refreshRecyclerView();
                     }
 
-                    if (menuItem.getItemId() == R.id.itemStartTime) {
+                    if (menuItem.getItemId() == R.id.itemAllEvents) {
                         filter.setText(menuItem.getTitle().toString());
 
                         refreshRecyclerView();
@@ -257,7 +261,148 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
         @Override
         protected void onPostExecute(Object o) {
             try {
-                eventList = (List<Event>) o;
+               // eventList = (List<Event>) o;
+
+                Event event1 = new Event();
+                Event event2 = new Event();
+                Event event3 = new Event();
+                Event event4 = new Event();
+                Event event5 = new Event();
+                Event event6 = new Event();
+
+                event1.setAttendeeCount(4);
+                event1.setCategory("GENERAL");
+                event1.setChatId("1");
+                event1.setEndTime(DateTime.now().plus(3));
+                event1.setFinalized(true);
+                event1.setFriendCount(2);
+                event1.setId("4");
+                event1.setInviterCount(2);
+                event1.setLastUpdated(DateTime.now());
+                event1.setOrganizerId("3");
+                event1.setRsvp(Event.RSVP.YES);
+                event1.setStartTime(DateTime.now().minus(4));
+                event1.setTitle("Music Concert at ABC at 9:00 pm tommorrow");
+                event1.setType(Event.Type.PUBLIC);
+                Event.Location location1 = new Event.Location();
+                location1.setName("Arbor Brewing Company");
+                location1.setX(32);
+                location1.setY(45);
+                location1.setZone("Bangalore");
+                event1.setLocation(location1);
+
+                event2.setAttendeeCount(5);
+                event2.setCategory("EAT_OUT");
+                event2.setChatId("2");
+                event2.setEndTime(DateTime.now().plus(5));
+                event2.setFinalized(false);
+                event2.setFriendCount(4);
+                event2.setId("5");
+                event2.setInviterCount(1);
+                event2.setLastUpdated(DateTime.now());
+                event2.setOrganizerId("4");
+                event2.setRsvp(Event.RSVP.YES);
+                event2.setStartTime(DateTime.now().minus(4));
+                event2.setTitle("Rock Night at Vapour");
+                event2.setType(Event.Type.PUBLIC);
+                Event.Location location2 = new Event.Location();
+                location2.setName("Vapour, IndiraNagar");
+                location2.setX(32);
+                location2.setY(45);
+                location2.setZone("Bangalore");
+                event2.setLocation(location2);
+
+                event3.setAttendeeCount(9);
+                event3.setCategory("DRINKS");
+                event3.setChatId("3");
+                event3.setEndTime(DateTime.now().plus(1));
+                event3.setFinalized(false);
+                event3.setFriendCount(5);
+                event3.setId("6");
+                event3.setInviterCount(0);
+                event3.setLastUpdated(DateTime.now());
+                event3.setOrganizerId("3");
+                event3.setRsvp(Event.RSVP.MAYBE);
+                event3.setStartTime(DateTime.now().minus(4));
+                event3.setTitle("Party at Aditya's Place");
+                event3.setType(Event.Type.INVITE_ONLY);
+                Event.Location location3 = new Event.Location();
+                location3.setName("Arekere, Mico Layout Bus Stand");
+                location3.setX(32);
+                location3.setY(45);
+                location3.setZone("Bangalore");
+                event3.setLocation(location3);
+
+                event4.setAttendeeCount(3);
+                event4.setCategory("CAFE");
+                event4.setChatId("4");
+                event4.setEndTime(DateTime.now().plus(6));
+                event4.setFinalized(false);
+                event4.setFriendCount(2);
+                event4.setId("6");
+                event4.setInviterCount(2);
+                event4.setLastUpdated(DateTime.now());
+                event4.setOrganizerId("6");
+                event4.setRsvp(Event.RSVP.NO);
+                event4.setStartTime(DateTime.now().minus(4));
+                event4.setTitle("Lunch at McDonalds");
+                event4.setType(Event.Type.PUBLIC);
+                Event.Location location4 = new Event.Location();
+                location4.setName("McDonalds, JP Nagar");
+                location4.setX(32);
+                location4.setY(45);
+                location4.setZone("Bangalore");
+                event4.setLocation(location4);
+
+                event5.setAttendeeCount(5);
+                event5.setCategory("MOVIES");
+                event5.setChatId("7");
+                event5.setEndTime(DateTime.now().plus(5));
+                event5.setFinalized(true);
+                event5.setFriendCount(4);
+                event5.setId("9");
+                event5.setInviterCount(1);
+                event5.setLastUpdated(DateTime.now());
+                event5.setOrganizerId("3");
+                event5.setRsvp(Event.RSVP.MAYBE);
+                event5.setStartTime(DateTime.now().minus(4));
+                event5.setTitle("Football Match at NGV against Samsung Team");
+                event5.setType(Event.Type.PUBLIC);
+                Event.Location location5 = new Event.Location();
+                location5.setName("National Games Village, Koramangala");
+                location5.setX(32);
+                location5.setY(45);
+                location5.setZone("Bangalore");
+                event5.setLocation(location5);
+
+                event6.setAttendeeCount(5);
+                event6.setCategory("OUTDOORS");
+                event6.setChatId("2");
+                event6.setEndTime(DateTime.now().plus(5));
+                event6.setFinalized(false);
+                event6.setFriendCount(4);
+                event6.setId("5");
+                event6.setInviterCount(1);
+                event6.setLastUpdated(DateTime.now());
+                event6.setOrganizerId("4");
+                event6.setRsvp(Event.RSVP.YES);
+                event6.setStartTime(DateTime.now().minus(4));
+                event6.setTitle("Rock Night at Vapour");
+                event6.setType(Event.Type.PUBLIC);
+                Event.Location location6 = new Event.Location();
+                location6.setName("");
+                location6.setX(32);
+                location6.setY(45);
+                location6.setZone("Bangalore");
+                event6.setLocation(location6);
+
+                eventList.add(event1);
+                eventList.add(event2);
+                eventList.add(event3);
+                eventList.add(event4);
+                eventList.add(event5);
+                eventList.add(event6);
+
                 refreshRecyclerView();
             } catch (Exception e) {
             }

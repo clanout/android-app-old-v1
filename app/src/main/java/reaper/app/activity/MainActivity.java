@@ -2,6 +2,7 @@ package reaper.app.activity;
 
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -17,10 +18,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
+import com.alertdialogpro.AlertDialogPro;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 import java.util.List;
@@ -171,18 +176,19 @@ public class MainActivity extends FragmentActivity implements EventFeedListener 
 
         if (item.getItemId() == R.id.abbAddPhone) {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setCancelable(true);
-            builder.setTitle("Add Phone Number");
+            MaterialDialog.Builder builder = new MaterialDialog.Builder(this);
+            builder.title("Add Phone Number");
+            builder.autoDismiss(true);
+            builder.theme(Theme.LIGHT);
 
             LayoutInflater inflater = this.getLayoutInflater();
             final View dialogView = inflater.inflate(R.layout.dialog_add_phone, null);
-            builder.setView(dialogView);
+            builder.customView(dialogView, true);
 
             final EditText phoneNumber = (EditText) dialogView.findViewById(R.id.etAddPhone);
             Button add = (Button) dialogView.findViewById(R.id.bAddPhone);
 
-            final AlertDialog alertDialog = builder.create();
+            final MaterialDialog alertDialog = builder.build();
 
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -197,7 +203,12 @@ public class MainActivity extends FragmentActivity implements EventFeedListener 
                         addPhoneApi.start();
 
                         AppPreferences.set(MainActivity.this, Constants.AppPreferenceKeys.MY_PHONE_NUMBER, parsedPhone);
+
                         getMenu().findItem(R.id.abbAddPhone).setVisible(false);
+
+                        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputManager.hideSoftInputFromWindow(dialogView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
                         alertDialog.cancel();
                     }
                 }
