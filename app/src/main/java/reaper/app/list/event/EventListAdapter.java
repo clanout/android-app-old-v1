@@ -138,10 +138,10 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
         Event currentItem = data.get(position);
 
-        if(currentItem.getTitle().length() <= 25){
+        if(currentItem.getTitle().length() <= 20){
             holder.title.setText(currentItem.getTitle());
         }else{
-            holder.title.setText(currentItem.getTitle().substring(0,22) + "...");
+            holder.title.setText(currentItem.getTitle().substring(0,18) + "...");
         }
 
 

@@ -1,36 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
     
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvAddPhoneMessage"
-        android:layout_marginLeft ="15dp"
-        android:layout_marginRight ="15dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft ="12dp"
+        android:layout_marginRight ="12dp"
+        android:layout_marginTop="6dp"
         android:textStyle="italic"
+        android:textSize="14sp"
         android:text="By adding your phone number, you can invite your phone contacts and receive invitations from people who have your phone number"
+        android:gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvAddPhoneNote"
+        android:layout_marginLeft ="12dp"
+        android:layout_marginRight ="12dp"
+        android:layout_marginTop="6dp"
+        android:textSize="16sp"
+        android:text="We do not share your phone number with anyone."
         android:gravity="center_horizontal" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:hint="Enter your 10 digit Phone Number"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:hint="Enter 10 digit Phone Number"
         android:textSize="14sp"
         android:id="@+id/etAddPhone"/>
 
-    <Button
+    <com.phillipcalvin.iconbutton.IconButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="15dp"
-        android:layout_marginLeft="15dp"
         android:id="@+id/bAddPhone"
-        android:text="DONE"/>
+        android:textSize="14sp"
+        android:drawableLeft="@drawable/ic_check_white_24dp"
+        app:iconPadding="10dp" />
     
 </LinearLayout>

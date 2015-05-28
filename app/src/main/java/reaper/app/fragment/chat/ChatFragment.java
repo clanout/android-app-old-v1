@@ -1,5 +1,6 @@
 package reaper.app.fragment.chat;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,9 +9,11 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import com.phillipcalvin.iconbutton.IconButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,27 +29,24 @@ import reaper.app.list.chat.ChatAdapter;
 public class ChatFragment extends Fragment implements View.OnClickListener {
 
     private EditText typeMessage;
-    private Button send;
+    private IconButton send;
     private ListView listView;
     private ChatAdapter chatAdapter;
     private List<ChatMessage> chatMessageList;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
         typeMessage = (EditText) view.findViewById(R.id.etTypeMessageChat);
-        send = (Button) view.findViewById(R.id.bSendChat);
+        send = (IconButton) view.findViewById(R.id.bSendChat);
         listView = (ListView) view.findViewById(R.id.lvChat);
-
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         loadDummyHistory();
         send.setOnClickListener(this);
     }
@@ -86,7 +86,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     private void loadDummyHistory(){
 
         chatMessageList = new ArrayList<ChatMessage>();
-
         ChatMessage msg = new ChatMessage();
         msg.setId(1);
         msg.setMe(false);
@@ -131,6 +130,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 
             typeMessage.setText("");
             displayMessage(chatMessage);
+
+            InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
         }
     }
 }

@@ -28,6 +28,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.phillipcalvin.iconbutton.IconButton;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -76,7 +78,7 @@ public class EditEventFragment extends Fragment implements AdapterView.OnItemCli
     private AutoCompleteTextView autoCompleteTextView;
     private EditText description;
     private RecyclerView recyclerView;
-    private Button done, cancel;
+    private IconButton done, cancel;
     private EventSuggestionsAdapter eventSuggestionsAdapter;
 
     private SelectTimeDialogFragment selectTimeDialogFragment;
@@ -121,8 +123,8 @@ public class EditEventFragment extends Fragment implements AdapterView.OnItemCli
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_event, container, false);
         eventIcon = (ImageView) view.findViewById(R.id.ivEditEventIcon);
-        done = (Button) view.findViewById(R.id.bEditEventDone);
-        cancel = (Button) view.findViewById(R.id.bEditEventCancel);
+        done = (IconButton) view.findViewById(R.id.bEditEventDone);
+        cancel = (IconButton) view.findViewById(R.id.bEditEventCancel);
         eventTitle = (TextView) view.findViewById(R.id.tvEditEventTitle);
         description = (EditText) view.findViewById(R.id.etEditEventDescription);
         timingsWithClock = (LinearLayout) view.findViewById(R.id.llEditEventSelectTimeWithClock);
@@ -146,7 +148,7 @@ public class EditEventFragment extends Fragment implements AdapterView.OnItemCli
         suggestionsBox.setVisibility(View.VISIBLE);
         noSuggestionsMessage.setVisibility(View.GONE);
 
-        eventIcon.setImageResource(R.drawable.ic_local_bar_black_48dp);
+        setEventIcon(oldEvent.getCategory());
         eventTitle.setText(oldEvent.getTitle());
 
         dateFormatter = DateTimeFormat.forPattern("MMM dd");
@@ -174,7 +176,6 @@ public class EditEventFragment extends Fragment implements AdapterView.OnItemCli
         userLatitude = AppPreferences.get(getActivity(), Constants.Location.LATITUDE);
         userLongitude = AppPreferences.get(getActivity(), Constants.Location.LONGITUDE);
         userZone = AppPreferences.get(getActivity(), Constants.Location.ZONE);
-
 
         timingsWithClock.setOnClickListener(this);
         done.setOnClickListener(this);
@@ -281,6 +282,46 @@ public class EditEventFragment extends Fragment implements AdapterView.OnItemCli
         }
 
 
+    }
+
+
+    private void setEventIcon(String category) {
+
+        if (category.equals(String.valueOf(EventCategory.GENERAL))) {
+            eventIcon.setImageResource(R.drawable.ic_event_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.EAT_OUT))) {
+            eventIcon.setImageResource(R.drawable.ic_local_restaurant_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.DRINKS))) {
+            eventIcon.setImageResource(R.drawable.ic_local_bar_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.CAFE))) {
+            eventIcon.setImageResource(R.drawable.ic_local_cafe_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.SHOPPING))) {
+            eventIcon.setImageResource(R.drawable.ic_local_mall_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.LOCAL_EVENTS))) {
+            eventIcon.setImageResource(R.drawable.ic_local_attraction_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.OUTDOORS))) {
+            eventIcon.setImageResource(R.drawable.ic_directions_bike_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.MOVIES))) {
+            eventIcon.setImageResource(R.drawable.ic_local_movies_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.PARTY))) {
+            eventIcon.setImageResource(R.drawable.ic_location_city_black_48dp);
+        }
     }
 
 

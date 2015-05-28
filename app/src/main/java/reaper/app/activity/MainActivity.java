@@ -27,6 +27,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.alertdialogpro.AlertDialogPro;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.phillipcalvin.iconbutton.IconButton;
 
 import java.util.List;
 
@@ -186,7 +187,7 @@ public class MainActivity extends FragmentActivity implements EventFeedListener 
             builder.customView(dialogView, true);
 
             final EditText phoneNumber = (EditText) dialogView.findViewById(R.id.etAddPhone);
-            Button add = (Button) dialogView.findViewById(R.id.bAddPhone);
+            IconButton add = (IconButton) dialogView.findViewById(R.id.bAddPhone);
 
             final MaterialDialog alertDialog = builder.build();
 

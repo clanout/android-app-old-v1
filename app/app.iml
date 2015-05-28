@@ -89,9 +89,9 @@
     <orderEntry type="library" exported="" name="recyclerview-v7-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="alertdialogpro-theme-material-0.2.3" level="project" />
     <orderEntry type="library" exported="" name="play-services-maps-7.0.0" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="libphonenumber-7.0.2" level="project" />
     <orderEntry type="library" exported="" name="jackson-mapper-asl-1.9.13" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-appindexing-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-cast-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-wearable-7.0.0" level="project" />

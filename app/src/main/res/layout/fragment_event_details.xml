@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
 
     <LinearLayout
@@ -52,7 +53,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:id="@+id/llEventDetailsLocation"
+                    android:clickable="true">
 
                     <TextView
                         android:layout_width="0dp"
@@ -81,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:gravity="center_vertical|center_horizontal">
 
             <TextView
@@ -108,7 +111,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="15dp"
             android:textStyle="italic"
             android:gravity="center_horizontal"
             android:id="@+id/tvEventDetailsDescription"/>
@@ -120,7 +123,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -150,23 +153,32 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
+        <com.phillipcalvin.iconbutton.IconButton
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:id="@+id/bEventDetailsRsvp"/>
+            android:id="@+id/bEventDetailsRsvp"
+            android:textSize="14sp"
+            app:iconPadding="10dp" />
 
-        <Button
+        <com.phillipcalvin.iconbutton.IconButton
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:id="@+id/bEventDetailsInvite"/>
+            android:id="@+id/bEventDetailsInvite"
+            android:drawableLeft="@drawable/ic_group_add_white_24dp"
+            android:textSize="14sp"
+            app:iconPadding="10dp" />
 
-        <Button
+        <com.phillipcalvin.iconbutton.IconButton
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:id="@+id/bEventDetailsChat"/>
+            android:id="@+id/bEventDetailsChat"
+            android:drawableLeft="@drawable/ic_chat_white_24dp"
+            android:textSize="14sp"
+            app:iconPadding="10dp" />
+
     </LinearLayout>
 
 </LinearLayout>

@@ -46,9 +46,7 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
     private FragmentManager fragmentManager;
     private EventListApiTask eventListApiTask;
     private RsvpUpdateThread rsvpUpdateThread;
-
     private List<Event> eventList;
-
     private LinearLayout mainContent;
     private TextView noEventsMessage;
     private RecyclerView recyclerView;
@@ -240,16 +238,22 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
         if(buttonId == 0){
             rsvpUpdateThread = new RsvpUpdateThread(getActivity(), eventList.get(position).getId(), Event.RSVP.YES);
             rsvpUpdateThread.start();
+
+            eventList.get(position).setRsvp(Event.RSVP.YES);
         }
 
         if(buttonId == 1){
             rsvpUpdateThread = new RsvpUpdateThread(getActivity(), eventList.get(position).getId(), Event.RSVP.MAYBE);
             rsvpUpdateThread.start();
+
+            eventList.get(position).setRsvp(Event.RSVP.MAYBE);
         }
 
         if(buttonId == 2){
             rsvpUpdateThread = new RsvpUpdateThread(getActivity(), eventList.get(position).getId(), Event.RSVP.NO);
             rsvpUpdateThread.start();
+
+            eventList.get(position).setRsvp(Event.RSVP.NO);
         }
     }
 
@@ -303,7 +307,7 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
                 event2.setOrganizerId("4");
                 event2.setRsvp(Event.RSVP.YES);
                 event2.setStartTime(DateTime.now().minus(4));
-                event2.setTitle("Rock Night at Vapour");
+                event2.setTitle("Rock Night");
                 event2.setType(Event.Type.PUBLIC);
                 Event.Location location2 = new Event.Location();
                 location2.setName("Vapour, IndiraNagar");
@@ -366,10 +370,10 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
                 event5.setOrganizerId("3");
                 event5.setRsvp(Event.RSVP.MAYBE);
                 event5.setStartTime(DateTime.now().minus(4));
-                event5.setTitle("Football Match at NGV against Samsung Team");
+                event5.setTitle("Fjghdsghsdgndsngodsgndsojgnsjgndsjgnkjfdgnkfngfdjngkjfdngkjjfdngkljfdngkjnfdlgknfdkljgnkjfdlngkjlfdngkjfndgkjnfdgkjjnfdgknfdklgn");
                 event5.setType(Event.Type.PUBLIC);
                 Event.Location location5 = new Event.Location();
-                location5.setName("National Games Village, Koramangala");
+                location5.setName("National Games Village, Koramangala, kjfghdshgfkdsgshgkdhfbgkfbdgkjbfdkgbfdkgjfdbgkfbgkfsbgkbfskgbsjlg");
                 location5.setX(32);
                 location5.setY(45);
                 location5.setZone("Bangalore");
@@ -387,7 +391,7 @@ public class HomeFragment extends Fragment implements EventListAdapter.EventSumm
                 event6.setOrganizerId("4");
                 event6.setRsvp(Event.RSVP.YES);
                 event6.setStartTime(DateTime.now().minus(4));
-                event6.setTitle("Rock Night at Vapour");
+                event6.setTitle("Rock Night at Vapour tonight");
                 event6.setType(Event.Type.PUBLIC);
                 Event.Location location6 = new Event.Location();
                 location6.setName("");

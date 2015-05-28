@@ -3,13 +3,13 @@
 
     <item
         android:id="@+id/itemGoing"
-        android:title="Going"/>
+        android:title="Going" />
 
     <item
         android:id="@+id/itemMaybe"
-        android:title="Maybe"/>
+        android:title="Maybe" />
 
     <item
         android:id="@+id/itemNotGoing"
-        android:title="Not Going"/>
+        android:title="Not Going" />
 </menu>

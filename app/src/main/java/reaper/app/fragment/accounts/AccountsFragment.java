@@ -93,7 +93,7 @@ public class AccountsFragment extends Fragment implements AccountsAdapter.ClickL
 
     public List<AccountsListItem> getdata() {
         accountList = new ArrayList<>();
-        int[] icons = {R.drawable.ic_action_group, R.drawable.ic_action_phone, R.drawable.ic_action_add_person};
+        int[] icons = {R.drawable.ic_action_group, R.drawable.ic_action_phone, R.drawable.ic_action_group};
         String[] titles = {"Friends", "Phone Number", "Invite Through Whatsapp"};
 
         for (int i = 0; i < icons.length && i < titles.length; i++) {

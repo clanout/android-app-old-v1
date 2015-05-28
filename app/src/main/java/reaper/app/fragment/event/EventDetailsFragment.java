@@ -23,6 +23,8 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.phillipcalvin.iconbutton.IconButton;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -33,6 +35,7 @@ import java.util.List;
 import reaper.R;
 import reaper.api.endpoints.event.EventDetailsApi;
 import reaper.api.model.event.Event;
+import reaper.api.model.event.EventCategory;
 import reaper.api.model.event.EventDetails;
 import reaper.app.activity.MainActivity;
 import reaper.app.fragment.chat.ChatFragment;
@@ -48,12 +51,12 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
 
     private ApiTask apiTask;
 
-    private LinearLayout mainContent;
+    private LinearLayout mainContent, locationLayout;
     private TextView noUsersMessage;
 
     private ImageView eventIcon;
     private TextView title, description, location, startDateTime, endDateTime;
-    private Button rsvp, invite, chat;
+    private IconButton rsvp, invite, chat;
     private RecyclerView recyclerView;
 
     private EventDetailsAdapter eventDetailsAdapter;
@@ -68,11 +71,12 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
         location = (TextView) view.findViewById(R.id.tvEventDetailsLocation);
         startDateTime = (TextView) view.findViewById(R.id.tvEventDetailsStartDateTime);
         endDateTime = (TextView) view.findViewById(R.id.tvEventDetailsEndDateTime);
-        rsvp = (Button) view.findViewById(R.id.bEventDetailsRsvp);
-        invite = (Button) view.findViewById(R.id.bEventDetailsInvite);
-        chat = (Button) view.findViewById(R.id.bEventDetailsChat);
+        rsvp = (IconButton) view.findViewById(R.id.bEventDetailsRsvp);
+        invite = (IconButton) view.findViewById(R.id.bEventDetailsInvite);
+        chat = (IconButton) view.findViewById(R.id.bEventDetailsChat);
         recyclerView = (RecyclerView) view.findViewById(R.id.rvEventDetails);
         mainContent = (LinearLayout) view.findViewById(R.id.llEventdetailsUsers);
+        locationLayout = (LinearLayout) view.findViewById(R.id.llEventDetailsLocation);
         noUsersMessage = (TextView) view.findViewById(R.id.tvEventDetailsNoUsers);
 
         return view;
@@ -87,29 +91,39 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
 
         eventDetails = null;
 
-        invite.setText("Invite People");
+        invite.setText("Invite");
         chat.setText("Chat");
 
         if (event.getRsvp() == Event.RSVP.YES) {
             rsvp.setText("Going");
+            rsvp.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_white_24dp, 0, 0, 0);
         }
 
         if (event.getRsvp() == Event.RSVP.NO) {
             rsvp.setText("Not Going");
+            rsvp.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_close_white_24dp, 0, 0, 0);
         }
 
         if (event.getRsvp() == Event.RSVP.MAYBE) {
             rsvp.setText("Maybe");
+            rsvp.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_help_black_24dp, 0, 0, 0);
         }
 
         invite.setOnClickListener(this);
         rsvp.setOnClickListener(this);
         chat.setOnClickListener(this);
-        location.setOnClickListener(this);
+        locationLayout.setOnClickListener(this);
 
-        eventIcon.setImageResource(R.drawable.ic_local_bar_black_48dp);
+        setEventIcon(event.getCategory());
         title.setText(event.getTitle());
-        location.setText(event.getLocation().getName());
+
+        if (event.getLocation().getName() == null || event.getLocation().getName().isEmpty()) {
+            location.setText("Location Not Specified");
+            locationLayout.setClickable(false);
+        } else {
+            location.setText(event.getLocation().getName());
+            locationLayout.setClickable(true);
+        }
 
         DateTime start = event.getStartTime();
         DateTime end = event.getEndTime();
@@ -123,42 +137,109 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
 
         initRecyclerView();
 
-        EventDetails eventDetails1 = new EventDetails();
-        eventDetails1.setDescription("Please be there by 6pm. Pets not allowed. This is a bring your own booze party.");
+        eventDetails = new EventDetails();
+        eventDetails.setDescription("Please be there by 6pm. Pets not allowed. This is a bring your own booze party.");
 
         List<EventDetails.Attendee> attendees = new ArrayList<>();
         EventDetails.Attendee attendee1 = new EventDetails.Attendee();
         EventDetails.Attendee attendee2 = new EventDetails.Attendee();
         EventDetails.Attendee attendee3 = new EventDetails.Attendee();
+        EventDetails.Attendee attendee4 = new EventDetails.Attendee();
+        EventDetails.Attendee attendee5 = new EventDetails.Attendee();
+        EventDetails.Attendee attendee6 = new EventDetails.Attendee();
+        EventDetails.Attendee attendee7 = new EventDetails.Attendee();
 
         attendee1.setName("Harsh Pokharna");
         attendee2.setName("Aditya Prasad");
         attendee3.setName("Gaurav Kunwar");
+        attendee4.setName("Aksshat Goel");
+        attendee5.setName("Rohit Gupta");
+        attendee6.setName("Abhishek Gaurav");
+        attendee7.setName("Devvrat Arya");
 
         attendee1.setFriend(true);
         attendee2.setFriend(false);
         attendee3.setFriend(true);
+        attendee4.setFriend(true);
+        attendee5.setFriend(false);
+        attendee6.setFriend(false);
+        attendee7.setFriend(true);
 
         attendee1.setId("1");
         attendee2.setId("2");
         attendee3.setId("3");
+        attendee4.setId("4");
+        attendee5.setId("5");
+        attendee6.setId("6");
+        attendee7.setId("7");
 
         attendee1.setInviter(true);
         attendee2.setInviter(true);
         attendee3.setInviter(false);
+        attendee4.setInviter(true);
+        attendee5.setInviter(false);
+        attendee6.setInviter(false);
+        attendee7.setInviter(true);
 
         attendee1.setRsvp(Event.RSVP.MAYBE);
         attendee2.setRsvp(Event.RSVP.MAYBE);
         attendee3.setRsvp(Event.RSVP.YES);
+        attendee4.setRsvp(Event.RSVP.YES);
+        attendee5.setRsvp(Event.RSVP.MAYBE);
+        attendee6.setRsvp(Event.RSVP.YES);
+        attendee7.setRsvp(Event.RSVP.MAYBE);
 
         attendees.add(attendee1);
         attendees.add(attendee2);
         attendees.add(attendee3);
+        attendees.add(attendee4);
+        attendees.add(attendee5);
+        attendees.add(attendee6);
+        attendees.add(attendee7);
 
-        eventDetails1.setAttendees(attendees);
-        description.setText(eventDetails1.getDescription());
-        refreshRecyclerView(eventDetails1.getAttendees());
+        eventDetails.setAttendees(attendees);
+        description.setText(eventDetails.getDescription());
+        refreshRecyclerView(eventDetails.getAttendees());
 
+    }
+
+    private void setEventIcon(String category) {
+
+        if (category.equals(String.valueOf(EventCategory.GENERAL))) {
+            eventIcon.setImageResource(R.drawable.ic_event_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.EAT_OUT))) {
+            eventIcon.setImageResource(R.drawable.ic_local_restaurant_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.DRINKS))) {
+            eventIcon.setImageResource(R.drawable.ic_local_bar_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.CAFE))) {
+            eventIcon.setImageResource(R.drawable.ic_local_cafe_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.SHOPPING))) {
+            eventIcon.setImageResource(R.drawable.ic_local_mall_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.LOCAL_EVENTS))) {
+            eventIcon.setImageResource(R.drawable.ic_local_attraction_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.OUTDOORS))) {
+            eventIcon.setImageResource(R.drawable.ic_directions_bike_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.MOVIES))) {
+            eventIcon.setImageResource(R.drawable.ic_local_movies_black_48dp);
+        }
+
+        if (category.equals(String.valueOf(EventCategory.PARTY))) {
+            eventIcon.setImageResource(R.drawable.ic_location_city_black_48dp);
+        }
     }
 
     private void initRecyclerView() {
@@ -217,8 +298,6 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbAddPhone).setVisible(false);
             ((MainActivity) getActivity()).getMenu().findItem(R.id.abbEditEvent).setOnMenuItemClickListener(this);
         }
-
-
     }
 
     public void setEvent(Event event) {
@@ -228,7 +307,7 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.tvEventDetailsLocation) {
+        if (view.getId() == R.id.llEventDetailsLocation) {
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                     Uri.parse("http://maps.google.com/maps?daddr=" + event.getLocation().getY() + "," + event.getLocation().getX()));
             startActivity(intent);
@@ -243,14 +322,17 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
                 public boolean onMenuItemClick(MenuItem menuItem) {
                     if (menuItem.getItemId() == R.id.itemGoing) {
                         rsvp.setText(menuItem.getTitle().toString());
+                        rsvp.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_white_24dp, 0, 0, 0);
                     }
 
                     if (menuItem.getItemId() == R.id.itemMaybe) {
                         rsvp.setText(menuItem.getTitle().toString());
+                        rsvp.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_help_black_24dp, 0, 0, 0);
                     }
 
                     if (menuItem.getItemId() == R.id.itemNotGoing) {
                         rsvp.setText(menuItem.getTitle().toString());
+                        rsvp.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_close_white_24dp, 0, 0, 0);
                     }
                     return true;
                 }
@@ -267,7 +349,7 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
                 Toast.makeText(getActivity(), "Only people who are going/maybe to the event can view chat", Toast.LENGTH_LONG).show();
             }
 
-            if(fragmentManager == null){
+            if (fragmentManager == null) {
                 fragmentManager = getActivity().getSupportFragmentManager();
             }
 
@@ -290,6 +372,8 @@ public class EventDetailsFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void ItemClicked(View view, int position) {
+
+        Toast.makeText(getActivity(), eventDetails.getAttendees().get(position).getName() + " has invited you to this event", Toast.LENGTH_LONG).show();
 
     }
 
